@@ -6,7 +6,7 @@ extends RigidBody2D
 @export var dead_zone: float = 10.0
 
 @export var spawn_position: Vector2 = Vector2(100, 100)
-
+@onready var player_root = get_parent()
 @onready var shoulder   = get_parent().get_node("Body/shoulder")
 @onready var body       = get_parent().get_node("Body")
 @onready var upper_arm  = get_parent().get_node("upperarm")
@@ -24,23 +24,33 @@ var touching_surface = false
 
 const OFFSET_MULTIPLIER   = 400.0
 const CAMERA_LERP_SPEED   = 4.0
-const MAX_FORCE           = 30000.0
-const CHARGE_RATE         = 1000000.0
+const MAX_FORCE		   = 30000.0
+const CHARGE_RATE		 = 1000000.0
 
 var charge_force := 0.0
 var is_charging := false
 
+# store original poses
+var original_positions = {}
+var original_rotations = {}
+
 func _ready():
+	# 1) connect timer
 	loop_timer.one_shot = true
 	loop_timer.timeout.connect(_on_loop_timeout)
+	# 2) attach shotgun
 	call_deferred("_attach_shotgun")
+	# 3) record each part's original global position & rotation
+	for part in [body, shoulder, upper_arm, forearm, hand, head]:
+		original_positions[part] = part.global_position
+		original_rotations[part] = part.global_rotation
 
 func _attach_shotgun():
-	get_parent().add_child(shotgun_object)
-	shotgun_object.global_position = global_position
+	player_root.add_child(shotgun_object)
+	shotgun_object.global_position = hand.global_position
 	var joint = shotgun_object.get_node("PinJoint2D")
 	joint.node_a = shotgun_object.get_path()
-	joint.node_b = self.get_path()
+	joint.node_b = hand.get_path()
 
 func _physics_process(delta: float) -> void:
 	# — Movement spring + damping —
@@ -78,7 +88,7 @@ func _physics_process(delta: float) -> void:
 
 	# — Camera lerp —
 	var mpos = get_global_mouse_position()
-	var vp = get_viewport().get_visible_rect().size
+	var vp   = get_viewport().get_visible_rect().size
 	var offset = (mpos - global_position) / vp * OFFSET_MULTIPLIER
 	camera.offset = camera.offset.lerp(-offset, delta * CAMERA_LERP_SPEED)
 
@@ -92,51 +102,60 @@ func _on_loop_timeout():
 	perform_loop()
 
 func perform_loop():
-	# stop timer so we only loop once
+	# 0) stop timer (one-shot only)
 	if not loop_timer.is_stopped():
 		loop_timer.stop()
 
 	# 1) spawn corpse clone
 	var c = CloneScene.instantiate()
 	get_tree().current_scene.add_child(c)
-	c.global_position = global_position
+	c.global_position = hand.global_position
 
-	# 2) sync pose & set collisions
-	var parts = {
-		"Body":          body,
-		"Body/shoulder": shoulder,
-		"upperarm":      upper_arm,
-		"forearm":       forearm,
-		"hand":          hand,
-		"head":          head
-	}
-	for path in parts.keys():
-		var src = parts[path]
+	# 2) sync & freeze each part on the clone
+	var part_paths = [
+		"Body",			 # the main torso node
+		"Body/shoulder",	# shoulder is under Body
+		"upperarm",		 # all these are siblings on player_root
+		"forearm",
+		"hand",
+		"head"
+	]
+	for path in part_paths:
+		var src = player_root.get_node(path)
 		var dst = c.get_node(path)
+		# copy world pose
 		dst.global_position = src.global_position
 		dst.global_rotation = src.global_rotation
+		# make fully static & collidable only with player
 		if dst is RigidBody2D:
-			dst.collision_layer = 1 << 4   # corpse on layer 5
-			dst.collision_mask  = 1 << 0   # collide only with player
-			dst.sleeping        = true
+			dst.freeze = true
+			dst.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
+			dst.collision_layer = 1 << 4	# layer 5
+			dst.collision_mask  = 1 << 0	# collide only with layer 1
+			# ensure shape is enabled
+			var shape = dst.get_node_or_null("CollisionShape2D")
+			if shape:
+				shape.disabled = false
 
-	# 3) clone the shotgun onto the corpse
+	# 3) clone the shotgun under the clone’s hand and freeze it
 	var sg = ShotgunScene.instantiate()
-	c.add_child(sg)
+	c.get_node("hand").add_child(sg)
 	sg.global_position = shotgun_object.global_position
-	var joint = sg.get_node("PinJoint2D")
-	joint.node_a = sg.get_path()
-	joint.node_b = c.get_path()
+	sg.global_rotation = shotgun_object.global_rotation
+	if sg is RigidBody2D:
+		sg.freeze = true
+		sg.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
+		sg.collision_layer = 1 << 4
+		sg.collision_mask  = 1 << 0
 
-	# 4) wake corpses after a short delay
-	await get_tree().create_timer(0.1).timeout
-	for path in parts.keys():
-		var dst = c.get_node(path)
-		if dst is RigidBody2D:
-			dst.sleeping = false
+	# 4) restore every live part back to its original recorded pose
+	for part in [body, shoulder, upper_arm, forearm, hand, head]:
+		part.global_position = original_positions[part]
+		part.global_rotation = original_rotations[part]
+		if part is RigidBody2D:
+			part.linear_velocity  = Vector2.ZERO
+			part.angular_velocity = 0.0
 
-	# 5) reset player & shotgun position
-	global_position  = spawn_position
-	linear_velocity  = Vector2.ZERO
-	angular_velocity = 0.0
-	shotgun_object.global_position = global_position
+	# 5) snap the live shotgun back into your hand
+	shotgun_object.global_position = hand.global_position
+	shotgun_object.global_rotation = hand.global_rotation
