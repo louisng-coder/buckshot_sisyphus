@@ -1,14 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://bydq8rtfu3hos"]
+[gd_scene load_steps=6 format=3 uid="uid://bydq8rtfu3hos"]
 
 [ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
 [ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="3_qhqgy"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qhqgy"]
+bounce = 0.2
+
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_g2els"]
 
 [node name="root of player" type="Node2D"]
 
 [node name="Body" type="RigidBody2D" parent="."]
-mass = 45.0
+mass = 30.0
+physics_material_override = SubResource("PhysicsMaterial_qhqgy")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
 position = Vector2(-9.53674e-07, 0)
@@ -22,6 +28,9 @@ node_b = NodePath("../../upperarm")
 
 [node name="Camera2D" type="Camera2D" parent="Body"]
 zoom = Vector2(2, 2)
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+rotation_smoothing_speed = 15.0
 
 [node name="ColorRect" type="ColorRect" parent="Body"]
 offset_left = -25.0
@@ -89,6 +98,7 @@ position = Vector2(77, 0)
 collision_layer = 8
 collision_mask = 8
 mass = 2.0
+physics_material_override = SubResource("PhysicsMaterial_g2els")
 lock_rotation = true
 script = ExtResource("2_onrkg")
 

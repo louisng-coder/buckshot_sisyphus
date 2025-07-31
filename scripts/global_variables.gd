@@ -14,3 +14,5 @@ var spring_force: float = 0
 var damping_force: float = 0
 var touching_surface: bool = false
 var grab_pressed: bool = false
+var bar_value
+var timer_value
