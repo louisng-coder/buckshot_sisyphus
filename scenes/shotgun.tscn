@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://paqpx6vwp0qe"]
 
 [ext_resource type="Script" uid="uid://ck50qdhinx1t6" path="res://scenes/shotgun.gd" id="1_gnj2g"]
-[ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="2_1ya1i"]
+[ext_resource type="Texture2D" uid="uid://ceodqnvecr1x1" path="res://assets/shotgun.png" id="2_gnj2g"]
 
 [node name="shotgun" type="RigidBody2D"]
 collision_layer = 8
@@ -10,17 +10,18 @@ mass = 5.0
 script = ExtResource("1_gnj2g")
 
 [node name="Icon" type="Sprite2D" parent="."]
-position = Vector2(14, 0)
-scale = Vector2(0.4, 0.1)
-texture = ExtResource("2_1ya1i")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2(14, 0)
-scale = Vector2(0.4, 0.1)
-polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
+texture_filter = 1
+position = Vector2(8, 0)
+rotation = 3.14159
+texture = ExtResource("2_gnj2g")
 
 [node name="PinJoint2D" type="PinJoint2D" parent="."]
 position = Vector2(-9.53674e-07, 0)
 scale = Vector2(0.2, 0.01)
 node_a = NodePath("..")
 node_b = NodePath("../../hand")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(8, 0)
+rotation = -3.14159
+polygon = PackedVector2Array(3.5, -6.2, 2, -5.8, 2, -4.9, -2.2, -4, -32, -4, -32, 0, 0, 0, 0, 2, 9.7, 2, 14.7, 5, 20, 5, 20, -4, 14.6, -4, 12.6, -2, 9, -2, 9, -4, 4.6, -4)

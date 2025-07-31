@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bydq8rtfu3hos"]
 
-[ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="1_onrkg"]
 [ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
+[ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="3_qhqgy"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
 
@@ -9,10 +9,6 @@
 
 [node name="Body" type="RigidBody2D" parent="."]
 mass = 45.0
-
-[node name="Icon" type="Sprite2D" parent="Body"]
-scale = Vector2(0.4, 0.2)
-texture = ExtResource("1_onrkg")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
 position = Vector2(-9.53674e-07, 0)
@@ -25,7 +21,14 @@ node_a = NodePath("..")
 node_b = NodePath("../../uppperarm")
 
 [node name="Camera2D" type="Camera2D" parent="Body"]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(2, 2)
+
+[node name="ColorRect" type="ColorRect" parent="Body"]
+offset_left = -25.0
+offset_top = -12.0
+offset_right = 26.0
+offset_bottom = 12.0
+color = Color(0.184314, 0.211765, 0.6, 1)
 
 [node name="uppperarm" type="RigidBody2D" parent="."]
 position = Vector2(41, 0)
@@ -34,32 +37,31 @@ collision_mask = 2
 mass = 5.0
 gravity_scale = 0.1
 
-[node name="Icon" type="Sprite2D" parent="uppperarm"]
-position = Vector2(-11, 0)
-scale = Vector2(0.2, 0.1)
-texture = ExtResource("1_onrkg")
-
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="uppperarm"]
 position = Vector2(-11, 0)
 scale = Vector2(0.2, 0.1)
 polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
 
 [node name="PinJoint2D" type="PinJoint2D" parent="uppperarm"]
+position = Vector2(3, 0)
 scale = Vector2(0.2, 0.1)
 node_a = NodePath("..")
 node_b = NodePath("../../forearm")
 
+[node name="ColorRect" type="ColorRect" parent="uppperarm"]
+offset_left = -24.0
+offset_top = -6.0
+offset_right = 2.0
+offset_bottom = 6.0
+color = Color(0, 0.282353, 0.67451, 1)
+
 [node name="forearm" type="RigidBody2D" parent="."]
-position = Vector2(50, 0)
+position = Vector2(67, 0)
 collision_layer = 4
 collision_mask = 4
 mass = 5.0
 physics_material_override = SubResource("PhysicsMaterial_onrkg")
 gravity_scale = 0.1
-
-[node name="Icon" type="Sprite2D" parent="forearm"]
-scale = Vector2(0.2, 0.1)
-texture = ExtResource("1_onrkg")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="forearm"]
 position = Vector2(-9.53674e-07, 0)
@@ -72,17 +74,20 @@ scale = Vector2(0.2, 0.01)
 node_a = NodePath("..")
 node_b = NodePath("../../hand")
 
+[node name="ColorRect" type="ColorRect" parent="forearm"]
+offset_left = -25.0
+offset_top = -6.0
+offset_right = 2.0
+offset_bottom = 6.0
+color = Color(0, 0.282353, 0.67451, 1)
+
 [node name="hand" type="RigidBody2D" parent="."]
-position = Vector2(60, 0)
+position = Vector2(77, 0)
 collision_layer = 8
 collision_mask = 8
 mass = 2.0
 lock_rotation = true
 script = ExtResource("2_onrkg")
-
-[node name="Icon" type="Sprite2D" parent="hand"]
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("1_onrkg")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="hand"]
 position = Vector2(-9.53674e-07, 0)
@@ -98,19 +103,21 @@ position = Vector2(-9.53674e-07, 0)
 scale = Vector2(0.15, 0.15)
 polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
 
+[node name="ColorRect2" type="ColorRect" parent="hand"]
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
+color = Color(0.898039, 0.666667, 0.478431, 1)
+
 [node name="head" type="RigidBody2D" parent="."]
 z_index = -1
 mass = 2.0
 
 [node name="Icon" type="Sprite2D" parent="head"]
-position = Vector2(36, 0)
-scale = Vector2(0.15, 0.15)
-texture = ExtResource("1_onrkg")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="head"]
-position = Vector2(36, 0)
-scale = Vector2(0.15, 0.15)
-polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
+texture_filter = 1
+position = Vector2(35, 0)
+texture = ExtResource("3_qhqgy")
 
 [node name="shoulder" type="PinJoint2D" parent="head"]
 position = Vector2(26, 0)
@@ -118,5 +125,14 @@ node_a = NodePath("..")
 node_b = NodePath("../../Body")
 disable_collision = false
 
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="head"]
+position = Vector2(35, 0)
+polygon = PackedVector2Array(-5.1, -7.5, -7.1, -3.5, -7.5, 4.9, -4.9, 7.5, 3.9, 7.5, 5.9, 5.5, 7.5, 5.5, 7.5, -5.1, 3.5, -7.1)
+
+[node name="loop_timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
 [connection signal="body_entered" from="hand/grab_area" to="hand" method="_on_grab_area_body_entered"]
 [connection signal="body_exited" from="hand/grab_area" to="hand" method="_on_grab_area_body_exited"]
+[connection signal="timeout" from="loop_timer" to="hand" method="_on_timer_timeout"]
