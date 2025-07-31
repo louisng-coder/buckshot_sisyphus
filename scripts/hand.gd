@@ -55,7 +55,8 @@ func _physics_process(delta: float) -> void:
 	# Step 6: Pull the hand toward the target using a spring-like force,
 	# and also slow it down using damping
 	var spring_force = to_target * spring_strength
-	var damping_force = -linear_velocity * damping
+	var damping_force = Vector2(-linear_velocity.x * damping, 0)
+
 
 	# Step 7: Apply both forces to the hand to move it realistically
 	apply_central_force(spring_force + damping_force)
@@ -79,15 +80,9 @@ func _physics_process(delta: float) -> void:
 		body.apply_central_force(crawl_force)
 	# --- SHOOTING AND RECOIL ---
 	if Input.is_action_just_pressed("shoot"):
-		var recoil_strength = 800000.0
-		var gun_direction = shotgun_object.direction.normalized()
-		var recoil = -gun_direction * recoil_strength
-		# wake the body in case it's sleeping:
-		body.sleeping = false
-		# Godot 4: apply_impulse(offset, impulse)
-		# offset = Vector2.ZERO applies it at the center of mass
-		body.apply_impulse(Vector2.ZERO, recoil)
-		print("recoil impulse applied:", recoil)
+		var recoil_strength = 30000.0
+		var gun_direction = shotgun_object.actual_direction
+		body.apply_impulse(-recoil_strength * gun_direction)
 
 
 

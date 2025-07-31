@@ -25,7 +25,7 @@ node_a = NodePath("..")
 node_b = NodePath("../../uppperarm")
 
 [node name="Camera2D" type="Camera2D" parent="Body"]
-zoom = Vector2(0.5, 0.5)
+zoom = Vector2(0.3, 0.3)
 
 [node name="uppperarm" type="RigidBody2D" parent="."]
 position = Vector2(41, 0)
