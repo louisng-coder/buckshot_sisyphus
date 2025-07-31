@@ -92,11 +92,16 @@ func _physics_process(delta: float) -> void:
 	var offset = (mpos - global_position) / vp * OFFSET_MULTIPLIER
 	camera.offset = camera.offset.lerp(-offset, delta * CAMERA_LERP_SPEED)
 
+var surface_touch_count := 0
+
 func _on_grab_area_body_entered(b: Node2D) -> void:
-	touching_surface = true
+	surface_touch_count += 1
+	touching_surface = surface_touch_count > 0
 
 func _on_grab_area_body_exited(b: Node2D) -> void:
-	touching_surface = false
+	surface_touch_count = max(surface_touch_count - 1, 0)
+	touching_surface = surface_touch_count > 0
+
 
 func _on_loop_timeout():
 	perform_loop()
@@ -130,12 +135,17 @@ func perform_loop():
 		if dst is RigidBody2D:
 			dst.freeze = true
 			dst.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
-			dst.collision_layer = 1 << 4	# layer 5
-			dst.collision_mask  = 1 << 0	# collide only with layer 1
-			# ensure shape is enabled
+			# Make all limbs collide with all layers
+			dst.collision_layer = 1 | 2 | 3 | 4
+			dst.collision_mask = 1 | 2 | 3 | 4
+
 			var shape = dst.get_node_or_null("CollisionShape2D")
 			if shape:
 				shape.disabled = false
+
+
+
+
 
 	# 3) clone the shotgun under the clone’s hand and freeze it
 	var sg = ShotgunScene.instantiate()
@@ -145,8 +155,10 @@ func perform_loop():
 	if sg is RigidBody2D:
 		sg.freeze = true
 		sg.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
-		sg.collision_layer = 1 << 4
-		sg.collision_mask  = 1 << 0
+		sg.collision_layer = 1 | 2 | 3 | 4
+		sg.collision_mask  = 1 | 2 | 3 | 4
+
+
 
 	# 4) restore every live part back to its original recorded pose
 	for part in [body, shoulder, upper_arm, forearm, hand, head]:
