@@ -1,16 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://wh7l5rgrvw4s"]
+[gd_scene load_steps=3 format=3 uid="uid://wh7l5rgrvw4s"]
 
-[ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="1_7t7y6"]
+[ext_resource type="Script" uid="uid://ck50qdhinx1t6" path="res://scenes/shotgun.gd" id="1_gnj2g"]
+[ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="2_1ya1i"]
 
-[node name="cane" type="RigidBody2D"]
+[node name="shotgun" type="RigidBody2D"]
 collision_layer = 8
 collision_mask = 8
 mass = 5.0
+script = ExtResource("1_gnj2g")
 
 [node name="Icon" type="Sprite2D" parent="."]
 position = Vector2(14, 0)
 scale = Vector2(0.4, 0.1)
-texture = ExtResource("1_7t7y6")
+texture = ExtResource("2_1ya1i")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 position = Vector2(14, 0)

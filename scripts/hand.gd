@@ -10,7 +10,19 @@ extends RigidBody2D
 @onready var shoulder = get_parent().get_node("Body/shoulder")
 @onready var body = get_parent().get_node("Body")
 
+var shotgun = preload("res://scenes/shotgun.tscn")
+var shotgun_object = shotgun.instantiate()
+func _ready():
+	pass
+	call_deferred("_attach_shotgun", shotgun_object)
 
+func _attach_shotgun(shotgun_object):
+	get_parent().add_child(shotgun_object)
+	shotgun_object.global_position = global_position + Vector2(0, 0)
+
+	var joint = shotgun_object.get_node("PinJoint2D")
+	joint.node_a = shotgun_object.get_path()
+	joint.node_b = self.get_path()
 
 # This function runs every frame to update the hand's position
 func _physics_process(delta: float) -> void:
@@ -63,25 +75,24 @@ func _physics_process(delta: float) -> void:
 	GlobalVariables.spring_force = spring_force.length()
 	GlobalVariables.damping_force = damping_force.length()
 	if touching_surface and Input.is_action_pressed("grab"):
-		var crawl_force = -spring_force
+		var crawl_force = -spring_force * 2
 		body.apply_central_force(crawl_force)
-	# Test: Rotate the cane to align with the arm vector
+	# --- SHOOTING AND RECOIL ---
+	if Input.is_action_just_pressed("shoot"):
+		var recoil_strength = 800000.0
+		var gun_direction = shotgun_object.direction.normalized()
+		var recoil = -gun_direction * recoil_strength
+		# wake the body in case it's sleeping:
+		body.sleeping = false
+		# Godot 4: apply_impulse(offset, impulse)
+		# offset = Vector2.ZERO applies it at the center of mass
+		body.apply_impulse(Vector2.ZERO, recoil)
+		print("recoil impulse applied:", recoil)
 
 
-var cane_scene = preload("res://scenes/cane.tscn")
 
-func _ready():
-	pass
-	var cane = cane_scene.instantiate()
-	call_deferred("_attach_cane", cane)
 
-func _attach_cane(cane):
-	get_parent().add_child(cane)
-	cane.global_position = global_position + Vector2(0, 0)
 
-	var joint = cane.get_node("PinJoint2D")
-	joint.node_a = cane.get_path()
-	joint.node_b = self.get_path()
 
 
 
