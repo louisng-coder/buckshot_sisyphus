@@ -13,6 +13,7 @@ script = ExtResource("1_gnj2g")
 texture_filter = 1
 position = Vector2(8, 0)
 rotation = 3.14159
+scale = Vector2(1, 1.5)
 texture = ExtResource("2_gnj2g")
 
 [node name="PinJoint2D" type="PinJoint2D" parent="."]
@@ -24,4 +25,5 @@ node_b = NodePath("../../hand")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 position = Vector2(8, 0)
 rotation = -3.14159
+scale = Vector2(1, 1.5)
 polygon = PackedVector2Array(3.5, -6.2, 2, -5.8, 2, -4.9, -2.2, -4, -32, -4, -32, 0, 0, 0, 0, 2, 9.7, 2, 14.7, 5, 20, 5, 20, -4, 14.6, -4, 12.6, -2, 9, -2, 9, -4, 4.6, -4)

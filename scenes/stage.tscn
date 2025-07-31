@@ -27,7 +27,7 @@ sources/1 = SubResource("TileSetAtlasSource_st0q7")
 [node name="Stage" type="Node2D"]
 
 [node name="root of player" parent="." instance=ExtResource("2_aees8")]
-position = Vector2(97, 19)
+position = Vector2(100, 100)
 
 [node name="Variables" type="Label" parent="."]
 visible = false

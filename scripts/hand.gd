@@ -5,28 +5,37 @@ extends RigidBody2D
 @export var max_reach: float = 60.0
 @export var dead_zone: float = 10.0
 
-@onready var shoulder = get_parent().get_node("Body/shoulder")
-@onready var body = get_parent().get_node("Body")
-@onready var camera = get_parent().get_node("Body/Camera2D")
-@onready var loop_timer = get_parent().get_node("loop_timer")
-var shotgun = preload("res://scenes/shotgun.tscn")
-var shotgun_object = shotgun.instantiate()
+@export var spawn_position: Vector2 = Vector2(100, 100)
+
+@onready var shoulder   = get_parent().get_node("Body/shoulder")
+@onready var body       = get_parent().get_node("Body")
+@onready var upper_arm  = get_parent().get_node("upperarm")
+@onready var forearm    = get_parent().get_node("forearm")
+@onready var hand       = get_parent().get_node("hand")
+@onready var head       = get_parent().get_node("head")
+@onready var camera     = get_parent().get_node("Body/Camera2D")
+@onready var loop_timer = get_parent().get_node("loop_timer") as Timer
+
+var CloneScene   = preload("res://scenes/clone.tscn")
+var ShotgunScene = preload("res://scenes/shotgun.tscn")
+var shotgun_object = ShotgunScene.instantiate()
 
 var touching_surface = false
 
-const OFFSET_MULTIPLIER = 400.0
-const CAMERA_LERP_SPEED = 4.0
-const MAX_FORCE := 90000.0      
-const CHARGE_RATE := 1000000.0    
+const OFFSET_MULTIPLIER   = 400.0
+const CAMERA_LERP_SPEED   = 4.0
+const MAX_FORCE           = 30000.0
+const CHARGE_RATE         = 1000000.0
 
 var charge_force := 0.0
 var is_charging := false
 
-
 func _ready():
-	call_deferred("_attach_shotgun", shotgun_object)
+	loop_timer.one_shot = true
+	loop_timer.timeout.connect(_on_loop_timeout)
+	call_deferred("_attach_shotgun")
 
-func _attach_shotgun(shotgun_object):
+func _attach_shotgun():
 	get_parent().add_child(shotgun_object)
 	shotgun_object.global_position = global_position
 	var joint = shotgun_object.get_node("PinJoint2D")
@@ -34,93 +43,100 @@ func _attach_shotgun(shotgun_object):
 	joint.node_b = self.get_path()
 
 func _physics_process(delta: float) -> void:
-	var is_grabbing = Input.is_action_pressed("grab")
-	var is_aiming = Input.is_action_pressed("aim")
+	# — Movement spring + damping —
+	apply_central_force(-linear_velocity * damping * 0.2)
 
-	var damping_force = -linear_velocity * damping * 0.2
-	apply_central_force(damping_force)
-
-	if is_grabbing:
-		var mouse_pos = get_global_mouse_position()
-		var direction_vector = mouse_pos - shoulder.global_position
-		var distance = direction_vector.length()
-
-		if distance >= dead_zone:
-			if distance > max_reach:
-				direction_vector = direction_vector.normalized() * max_reach
-			var target_position = shoulder.global_position + direction_vector
-			var to_target = target_position - global_position
-			var spring_force = to_target * spring_strength
-			apply_central_force(spring_force)
-
+	if Input.is_action_pressed("grab"):
+		var mpos = get_global_mouse_position()
+		var dir = mpos - shoulder.global_position
+		var dist = dir.length()
+		if dist >= dead_zone:
+			if dist > max_reach:
+				dir = dir.normalized() * max_reach
+			var target = shoulder.global_position + dir
+			var force = (target - global_position) * spring_strength
+			apply_central_force(force)
 			if touching_surface:
-				var crawl_force = -spring_force * 2
-				body.apply_central_force(crawl_force)
+				body.apply_central_force(-force * 2)
 
-			# Debug info
-			GlobalVariables.spring_strength = spring_strength
-			GlobalVariables.damping = damping
-			GlobalVariables.max_reach = max_reach
-			GlobalVariables.dead_zone = dead_zone
-			GlobalVariables.touching_surface = touching_surface
-			GlobalVariables.mouse_pos = mouse_pos
-			GlobalVariables.direction_vector = direction_vector
-			GlobalVariables.distance = distance
-			GlobalVariables.target_position = target_position
-			GlobalVariables.to_target = to_target
-			GlobalVariables.spring_force = spring_force.length()
-			GlobalVariables.damping_force = damping_force.length()
-	
-
-# hold to charge the shotgun blast
+	# — Shotgun charge + recoil —
 	if Input.is_action_pressed("shoot"):
 		is_charging = true
-		charge_force += CHARGE_RATE * delta
-		charge_force = clamp(charge_force, 0, MAX_FORCE)
-		Engine.time_scale = 0.03  # slow motion effect
+		charge_force = clamp(charge_force + CHARGE_RATE * delta, 0, MAX_FORCE)
+		Engine.time_scale = 0.03
 	elif Input.is_action_just_released("shoot") and is_charging:
 		is_charging = false
-		Engine.time_scale = 1.0  # reset time scale
-
+		Engine.time_scale = 1.0
 		var dir = shotgun_object.actual_direction.normalized()
 		body.apply_impulse(-dir * charge_force)
-		print(charge_force)
 		charge_force = 0.0
+		loop_timer.start(5.0)
 
-		
-		
-		
-		
-#AAA
-	if Input.is_action_just_pressed("loop"):
-		if loop_timer.time_left > 0:
-			_perform_loop()
-	if loop_timer.time_left == 0:
-		_perform_loop()
-		
+	# — Manual loop —
+	if Input.is_action_just_pressed("loop") and loop_timer.time_left > 0:
+		perform_loop()
 
+	# — Camera lerp —
+	var mpos = get_global_mouse_position()
+	var vp = get_viewport().get_visible_rect().size
+	var offset = (mpos - global_position) / vp * OFFSET_MULTIPLIER
+	camera.offset = camera.offset.lerp(-offset, delta * CAMERA_LERP_SPEED)
 
-	# 1. get mouse and player positions
-	var mouse_pos = get_global_mouse_position()
-	var player_pos = global_position
-
-	# 2. figure out how big the viewport is
-	var vp_size = get_viewport().get_visible_rect().size
-
-	# 3. compute an offset vector in screen-relative space
-	var offset_vec = (mouse_pos - player_pos) / (vp_size) * OFFSET_MULTIPLIER
-
-	# 4. lerp your Camera2D.offset toward that
-	camera.offset = camera.offset.lerp(-offset_vec, delta * CAMERA_LERP_SPEED)
-
-func _on_grab_area_body_entered(body: Node2D) -> void:
+func _on_grab_area_body_entered(b: Node2D) -> void:
 	touching_surface = true
 
-func _on_grab_area_body_exited(body: Node2D) -> void:
+func _on_grab_area_body_exited(b: Node2D) -> void:
 	touching_surface = false
 
-func _perform_loop():
-	pass
+func _on_loop_timeout():
+	perform_loop()
 
-func _on_timer_timeout() -> void:
-	pass # Replace with function body.
+func perform_loop():
+	# stop timer so we only loop once
+	if not loop_timer.is_stopped():
+		loop_timer.stop()
+
+	# 1) spawn corpse clone
+	var c = CloneScene.instantiate()
+	get_tree().current_scene.add_child(c)
+	c.global_position = global_position
+
+	# 2) sync pose & set collisions
+	var parts = {
+		"Body":          body,
+		"Body/shoulder": shoulder,
+		"upperarm":      upper_arm,
+		"forearm":       forearm,
+		"hand":          hand,
+		"head":          head
+	}
+	for path in parts.keys():
+		var src = parts[path]
+		var dst = c.get_node(path)
+		dst.global_position = src.global_position
+		dst.global_rotation = src.global_rotation
+		if dst is RigidBody2D:
+			dst.collision_layer = 1 << 4   # corpse on layer 5
+			dst.collision_mask  = 1 << 0   # collide only with player
+			dst.sleeping        = true
+
+	# 3) clone the shotgun onto the corpse
+	var sg = ShotgunScene.instantiate()
+	c.add_child(sg)
+	sg.global_position = shotgun_object.global_position
+	var joint = sg.get_node("PinJoint2D")
+	joint.node_a = sg.get_path()
+	joint.node_b = c.get_path()
+
+	# 4) wake corpses after a short delay
+	await get_tree().create_timer(0.1).timeout
+	for path in parts.keys():
+		var dst = c.get_node(path)
+		if dst is RigidBody2D:
+			dst.sleeping = false
+
+	# 5) reset player & shotgun position
+	global_position  = spawn_position
+	linear_velocity  = Vector2.ZERO
+	angular_velocity = 0.0
+	shotgun_object.global_position = global_position

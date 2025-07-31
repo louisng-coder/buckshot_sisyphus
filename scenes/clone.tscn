@@ -1,14 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://bydq8rtfu3hos"]
+[gd_scene load_steps=3 format=3 uid="uid://ch0ojmhqb1iry"]
 
-[ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
-[ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="3_qhqgy"]
+[ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="1_ypstt"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
 
-[node name="root of player" type="Node2D"]
+[node name="clone" type="Node2D"]
 
 [node name="Body" type="RigidBody2D" parent="."]
 mass = 45.0
+freeze = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
 position = Vector2(-9.53674e-07, 0)
@@ -19,9 +19,6 @@ polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64
 position = Vector2(22, 0)
 node_a = NodePath("..")
 node_b = NodePath("../../upperarm")
-
-[node name="Camera2D" type="Camera2D" parent="Body"]
-zoom = Vector2(2, 2)
 
 [node name="ColorRect" type="ColorRect" parent="Body"]
 offset_left = -25.0
@@ -37,6 +34,7 @@ collision_layer = 2
 collision_mask = 2
 mass = 5.0
 gravity_scale = 0.1
+freeze = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="upperarm"]
 position = Vector2(-11, 0)
@@ -64,6 +62,7 @@ collision_mask = 4
 mass = 5.0
 physics_material_override = SubResource("PhysicsMaterial_onrkg")
 gravity_scale = 0.1
+freeze = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="forearm"]
 position = Vector2(-9.53674e-07, 0)
@@ -90,7 +89,7 @@ collision_layer = 8
 collision_mask = 8
 mass = 2.0
 lock_rotation = true
-script = ExtResource("2_onrkg")
+freeze = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="hand"]
 position = Vector2(-9.53674e-07, 0)
@@ -117,11 +116,12 @@ metadata/_edit_use_anchors_ = true
 [node name="head" type="RigidBody2D" parent="."]
 z_index = -1
 mass = 2.0
+freeze = true
 
 [node name="Icon" type="Sprite2D" parent="head"]
 texture_filter = 1
 position = Vector2(35, 0)
-texture = ExtResource("3_qhqgy")
+texture = ExtResource("1_ypstt")
 
 [node name="shoulder" type="PinJoint2D" parent="head"]
 position = Vector2(26, 0)
