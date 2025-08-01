@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://paqpx6vwp0qe"]
 
 [ext_resource type="Script" uid="uid://ck50qdhinx1t6" path="res://scenes/shotgun.gd" id="1_gnj2g"]
-[ext_resource type="Texture2D" uid="uid://ceodqnvecr1x1" path="res://assets/shotgun.png" id="2_gnj2g"]
+[ext_resource type="Texture2D" uid="uid://dt450655pefyq" path="res://assets/scratch/shotgun.webp" id="2_gnj2g"]
 
 [node name="shotgun" type="RigidBody2D"]
 scale = Vector2(2, 2)
@@ -12,7 +12,7 @@ script = ExtResource("1_gnj2g")
 
 [node name="Icon" type="Sprite2D" parent="."]
 texture_filter = 1
-position = Vector2(8, 0)
+position = Vector2(31, 0.5)
 rotation = 3.14159
 scale = Vector2(1, 1.5)
 texture = ExtResource("2_gnj2g")

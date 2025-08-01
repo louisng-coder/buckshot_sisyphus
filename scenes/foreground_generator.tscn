@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://73pe2ouxoq6n"]
+
+[ext_resource type="Script" uid="uid://cb4rnw15cp1kt" path="res://scenes/foreground_generator.gd" id="1_nf7c3"]
+
+[node name="foreground_generator" type="Node2D"]
+script = ExtResource("1_nf7c3")
+block_count = 5
+size = 0.25

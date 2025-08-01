@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://4m6cg2d7oncq"]
+
+[ext_resource type="Texture2D" uid="uid://cwja5ti7ii1b0" path="res://assets/scratch/block_01_08_2025-13_24_41.png" id="1_fymal"]
+
+[node name="Scratchblock1" type="StaticBody2D"]
+collision_layer = 15
+collision_mask = 15
+
+[node name="Block01082025-132441" type="Sprite2D" parent="."]
+position = Vector2(130, 188)
+rotation = -0.200713
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_fymal")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(130, 188)
+rotation = -0.200713
+scale = Vector2(0.3, 0.3)
+polygon = PackedVector2Array(-181, -186, -209, -186, -209, -184.8, -211.8, -182, -213, -182, -213, -8.5, -212, 165, -212, 168.8, -186.1, 172, -183.7, 172, -169, 184.8, -169, 186, -133.2, 186, -115.3, 171, 106, 171, 110, 166, 112.1, 166, 110, 107, 208, 107, 212, 102, 213, 102, 213, 10.2, 207.8, 5, 30, 5, 30, -85.1, 106.1, -87, 110, -87, 110, -184.1, 107.1, -186, -120.9, -186, -138.7, -171, -163.3, -171, -181, -185)

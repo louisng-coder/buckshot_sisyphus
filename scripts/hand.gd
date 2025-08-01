@@ -4,6 +4,10 @@ extends RigidBody2D
 @export var damping: float = 200.0
 @export var max_reach: float = 60.0
 @export var dead_zone: float = 10.0
+@export_range(0.1, 10.0, 0.1) var min_zoom := 0.5
+@export_range(0.1, 10.0, 0.1) var max_zoom := 2.0
+@export var zoom_step := 0.1
+
 
 @onready var player_root = get_parent()
 @onready var shoulder   = player_root.get_node("Body/shoulder")
@@ -14,9 +18,16 @@ extends RigidBody2D
 @onready var head       = player_root.get_node("head")
 @onready var camera     = player_root.get_node("Body/Camera2D")
 
+# --- Objective Camera Lerp Variables ---
+var show_objective := true
+var objective_target := Vector2(1000, -500)
+var objective_lerp_speed := 2.0
+var objective_timer := 0.0
+var delay_after_focus := 1.5
+
 var CloneScene   = preload("res://scenes/clone.tscn")
 var ShotgunScene = preload("res://scenes/shotgun.tscn")
-var shotgun_object = ShotgunScene.instantiate()
+var shotgun_object: RigidBody2D
 
 var touching_surface = false
 var clones := []
@@ -35,7 +46,9 @@ var original_rotations = {}
 
 func _ready():
 	# attach shotgun
+	shotgun_object = ShotgunScene.instantiate() as RigidBody2D
 	call_deferred("_attach_shotgun")
+
 	# record original poses
 	for part in [body, shoulder, upper_arm, forearm, hand, head]:
 		original_positions[part] = part.global_position
@@ -48,10 +61,22 @@ func _attach_shotgun():
 	joint.node_a = shotgun_object.get_path()
 	joint.node_b = hand.get_path()
 
+
 func _physics_process(delta: float) -> void:
+	#Objective camera focus before gameplay
+	if show_objective:
+		camera.global_position = camera.global_position.lerp(objective_target, delta * objective_lerp_speed)
+		if camera.global_position.distance_to(objective_target) < 1.0:
+			objective_timer += delta
+			if objective_timer >= delay_after_focus:
+				show_objective = false
+				# Reset camera offset and snap position to player
+				camera.offset = Vector2.ZERO
+				camera.global_position = global_position
+		return
+
 	# update UI bars
 	GlobalVariables.bar_value = charge_force / MAX_FORCE
-	print(GlobalVariables.in_spawn_area)
 
 	# revert last corpse
 	if Input.is_action_just_pressed("revert") and clones.size() > 0:
@@ -75,7 +100,8 @@ func _physics_process(delta: float) -> void:
 			if touching_surface:
 				body.apply_central_force(-force)
 
-	# shotgun charge + recoil
+
+# — Shotgun charge + recoil (no mouse aim) —
 	if Input.is_action_pressed("shoot"):
 		is_charging = true
 		charge_force = clamp(charge_force + CHARGE_RATE * delta, 0, MAX_FORCE)
@@ -83,19 +109,37 @@ func _physics_process(delta: float) -> void:
 	elif Input.is_action_just_released("shoot") and is_charging:
 		is_charging = false
 		Engine.time_scale = 1.0
-		var dir = shotgun_object.actual_direction.normalized()
+	
+		# always shoot opposite the hand-to-shoulder vector
+		var dir = (hand.global_position - shoulder.global_position).normalized()
 		body.apply_impulse(-dir * charge_force)
 		charge_force = 0.0
+
 
 	# manual loop: only if not in spawn area
 	if Input.is_action_just_pressed("loop") and not GlobalVariables.in_spawn_area:
 		perform_loop()
 
-	# camera lerp
+	# camera follow lerp during gameplay
 	var mpos2 = get_global_mouse_position()
 	var vp   = get_viewport().get_visible_rect().size
-	var offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
-	camera.offset = camera.offset.lerp(-offset, delta * CAMERA_LERP_SPEED)
+	var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
+	camera.offset = camera.offset.lerp(-target_offset, delta * CAMERA_LERP_SPEED)
+	
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		match event.button_index:
+			MOUSE_BUTTON_WHEEL_UP:
+				_change_zoom(-zoom_step)
+			MOUSE_BUTTON_WHEEL_DOWN:
+				_change_zoom( zoom_step)
+
+func _change_zoom(delta_zoom: float) -> void:
+	# camera.zoom is a Vector2: we’ll change both axes the same amount
+	var z = camera.zoom.x + delta_zoom
+	z = clamp(z, min_zoom, max_zoom)
+	camera.zoom = Vector2(z, z)
+
 
 var surface_touch_count := 0
 
@@ -113,12 +157,10 @@ func perform_loop():
 	get_tree().current_scene.add_child(c)
 	c.global_position = hand.global_position
 	clones.append(c)
-	
 
-# apply tints
+	# apply tints
 	var base_brightness := 1.0
 	var decrement := 0.05
-
 	for idx in clones.size():
 		var corpse = clones[idx]
 		var strength = max(base_brightness - idx * decrement, 0.0)
@@ -129,7 +171,6 @@ func perform_loop():
 			for sub in child.get_children():
 				if sub is CanvasItem:
 					sub.modulate = tint
-
 
 	# sync & freeze each part on the clone
 	var part_paths = ["Body", "Body/shoulder", "upperarm", "forearm", "hand", "head"]
@@ -148,18 +189,14 @@ func perform_loop():
 				shape.disabled = false
 
 	# clone and freeze the shotgun on corpse
-	var sg = ShotgunScene.instantiate()
+	var sg = ShotgunScene.instantiate() as RigidBody2D
 	c.get_node("hand").add_child(sg)
-	
-	# copy position, rotation AND scale in one go
 	sg.global_transform = shotgun_object.global_transform
-	
 	if sg is RigidBody2D:
 		sg.freeze = true
 		sg.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
 		sg.collision_layer = 1 | 2 | 3 | 4
 		sg.collision_mask  = 1 | 2 | 3 | 4
-
 
 	# reset live parts to original pose
 	for part in [body, shoulder, upper_arm, forearm, hand, head]:

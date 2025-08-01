@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcmq0vbf38xyc"]
+
+[ext_resource type="Texture2D" uid="uid://kxbq7fpbqvxy" path="res://assets/scratch/2.png" id="1_ceuyh"]
+
+[node name="scratch2" type="StaticBody2D"]
+scale = Vector2(0.5, 0.5)
+collision_layer = 15
+collision_mask = 15
+
+[node name="2" type="Sprite2D" parent="."]
+texture = ExtResource("1_ceuyh")
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-257, -210, -285, -210, -285, -208.8, -287.8, -206, -289, -206, -289, -114.2, -286.9, -112.1, -288.1, -110, -289, -110, -289, -18.2, -287.2, -16.4, -289, -14.1, -289, 93.7, -286, 96, -289, 98.2, -289, 189.7, -285, 192.9, -285, 194.9, -263, 196, -259.7, 196, -245, 208.8, -245, 210, -209.1, 210, -190.3, 195, -70, 195, -65, 188, -63, 188, -63, 101.3, -64.7, 99, 284, 99, 288, 94, 289, 94, 289, -13.8, 283.8, -19, 68, -19, 69, -20.3, 69, -107.8, 65, -111.8, 69, -116.2, 69, -203.8, 65, -207.8, 65, -209.2, 63.4, -210, -197, -210, -215.7, -195, -238.3, -195, -257, -209)

@@ -1,35 +1,26 @@
-[gd_scene load_steps=11 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=9 format=3 uid="uid://dxhogwkguk3aj"]
 
-[ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="1_6eo5e"]
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
 [ext_resource type="Script" uid="uid://bx7htk6s7vwoa" path="res://scripts/variables(testing).gd" id="3_rnkuw"]
-[ext_resource type="Texture2D" uid="uid://b6yw03p6q1rh3" path="res://assets/icon (1).jpg" id="4_vcsse"]
+[ext_resource type="PackedScene" uid="uid://4m6cg2d7oncq" path="res://scenes/block.tscn" id="5_2so7o"]
 [ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scenes/player_area.gd" id="6_2so7o"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2so7o"]
-texture = ExtResource("4_vcsse")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_st0q7"]
-texture = ExtResource("1_6eo5e")
-texture_region_size = Vector2i(128, 128)
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
-
-[sub_resource type="TileSet" id="TileSet_1hwpr"]
-tile_size = Vector2i(128, 128)
-physics_layer_0/collision_layer = 15
-physics_layer_0/collision_mask = 15
-sources/0 = SubResource("TileSetAtlasSource_2so7o")
-sources/1 = SubResource("TileSetAtlasSource_st0q7")
+[ext_resource type="Texture2D" uid="uid://cvv72dka1p3ay" path="res://assets/scratch/image__76_-removebg-preview.png" id="6_st0q7"]
+[ext_resource type="PackedScene" uid="uid://73pe2ouxoq6n" path="res://scenes/foreground_generator.tscn" id="7_st0q7"]
 
 [sub_resource type="GDScript" id="GDScript_vcsse"]
 script/source = "extends ProgressBar
 
+func _ready() -> void:
+	# Ensure the bar’s range is set
+	min_value = 0
+	max_value = 1
+
 func _process(delta: float) -> void:
-	value = GlobalVariables.bar_value
+	# Safely fetch the global bar_value (fall back to 0.0 if nil)
+	var raw_value: float = GlobalVariables.bar_value if GlobalVariables.bar_value != null else 0.0
+	# Clamp into [min_value, max_value]
+	value = clamp(raw_value, min_value, max_value)
 "
 
 [node name="Stage" type="Node2D"]
@@ -43,10 +34,6 @@ offset_right = 40.0
 offset_bottom = 23.0
 theme_override_fonts/font = ExtResource("3_6c5u0")
 script = ExtResource("3_rnkuw")
-
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray(0, 0, 255, 255, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0)
-tile_set = SubResource("TileSet_1hwpr")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -66,13 +53,21 @@ max_value = 1.0
 script = SubResource("GDScript_vcsse")
 
 [node name="spawn_area" type="Area2D" parent="."]
-position = Vector2(100, 102)
-scale = Vector2(2, 2)
+position = Vector2(100, 114)
 script = ExtResource("6_2so7o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="spawn_area"]
 build_mode = 1
 polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 83, 6, 83, -6, 26, -6, 26, -12)
+
+[node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
+
+[node name="Image76-removebg-preview" type="Sprite2D" parent="."]
+position = Vector2(1000, -500)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_st0q7")
+
+[node name="foreground_generator" parent="." instance=ExtResource("7_st0q7")]
 
 [connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
 [connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]
