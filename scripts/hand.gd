@@ -112,7 +112,7 @@ func _physics_process(delta: float) -> void:
 	
 		# always shoot opposite the hand-to-shoulder vector
 		var dir = (hand.global_position - shoulder.global_position).normalized()
-		body.apply_impulse(-dir * charge_force)
+		body.apply_impulse(dir * charge_force)
 		charge_force = 0.0
 
 

@@ -6,7 +6,7 @@ func _physics_process(delta):
 	actual_direction = transform.x.normalized()  # Update it every frame
 	var aim_dir = (get_global_mouse_position() - global_position).normalized()
 
-	if Input.is_action_pressed("aim"):
+	if Input.is_action_pressed("grab"):
 	# Rotate the vector by 0 degrees (π/4 radians)
 		var angle_offset = PI  # 0 degrees in radians
 		var rotated_dir = aim_dir.rotated(angle_offset)
