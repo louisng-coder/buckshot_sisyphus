@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://4m6cg2d7oncq"]
 
-[ext_resource type="Texture2D" uid="uid://cwja5ti7ii1b0" path="res://assets/scratch/block_01_08_2025-13_24_41.png" id="1_fymal"]
+[ext_resource type="Texture2D" uid="uid://c10ck4qyvwwbp" path="res://assets/scratch/1.png" id="1_8r6n6"]
 
 [node name="Scratchblock1" type="StaticBody2D"]
 collision_layer = 15
@@ -10,7 +10,7 @@ collision_mask = 15
 position = Vector2(130, 188)
 rotation = -0.200713
 scale = Vector2(0.3, 0.3)
-texture = ExtResource("1_fymal")
+texture = ExtResource("1_8r6n6")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 position = Vector2(130, 188)
