@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=10 format=3 uid="uid://dxhogwkguk3aj"]
 
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
 [ext_resource type="Script" uid="uid://bx7htk6s7vwoa" path="res://scripts/variables(testing).gd" id="3_rnkuw"]
+[ext_resource type="Script" uid="uid://cvlwi72fvohf2" path="res://scenes/ammo_left.gd" id="4_1hwpr"]
 [ext_resource type="PackedScene" uid="uid://4m6cg2d7oncq" path="res://scenes/block.tscn" id="5_2so7o"]
 [ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scenes/player_area.gd" id="6_2so7o"]
 [ext_resource type="Texture2D" uid="uid://cvv72dka1p3ay" path="res://assets/scratch/image__76_-removebg-preview.png" id="6_st0q7"]
@@ -26,7 +27,7 @@ func _process(delta: float) -> void:
 [node name="Stage" type="Node2D"]
 
 [node name="root of player" parent="." instance=ExtResource("2_aees8")]
-position = Vector2(100, 114)
+position = Vector2(113, 107)
 
 [node name="Variables" type="Label" parent="."]
 visible = false
@@ -49,8 +50,21 @@ offset_left = 24.0
 offset_top = 19.0
 offset_right = 504.0
 offset_bottom = 104.0
+theme_override_fonts/font = ExtResource("3_6c5u0")
+theme_override_font_sizes/font_size = 50
 max_value = 1.0
 script = SubResource("GDScript_vcsse")
+
+[node name="Label" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 644.0
+offset_right = 460.0
+offset_bottom = 754.0
+theme_override_fonts/font = ExtResource("3_6c5u0")
+theme_override_font_sizes/font_size = 50
+text = "Ammo left: "
+script = ExtResource("4_1hwpr")
 
 [node name="spawn_area" type="Area2D" parent="."]
 position = Vector2(100, 114)
@@ -58,14 +72,25 @@ script = ExtResource("6_2so7o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="spawn_area"]
 build_mode = 1
-polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 83, 6, 83, -6, 26, -6, 26, -12)
+polygon = PackedVector2Array(-58, 1, -47, 31, 82, 4, 72, -26)
+
+[node name="Polygon2D" type="Polygon2D" parent="spawn_area"]
+color = Color(1, 0, 0, 0.0980392)
+polygon = PackedVector2Array(-58, 1, -47, 31, 82, 4, 72, -26)
 
 [node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
 
-[node name="Image76-removebg-preview" type="Sprite2D" parent="."]
-position = Vector2(1000, -1000)
+[node name="flag" type="Area2D" parent="."]
+position = Vector2(1000, -500)
 scale = Vector2(0.1, 0.1)
+
+[node name="Image76-removebg-preview" type="Sprite2D" parent="flag"]
+scale = Vector2(1, 1)
 texture = ExtResource("6_st0q7")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="flag"]
+scale = Vector2(1, 1)
+polygon = PackedVector2Array(-225, -246.5, -232.8, -238.5, -234.7, -238.5, -235.7, -232.5, -237, -232.5, -237, 231.1, -227, 245.1, -227, 246.5, -197.5, 246.5, -189.1, 236.5, -187.4, 236.5, -186, 230.7, -186, 107.7, -154, 93.8, -154, 93.2, -122, 87.2, -122, 86.5, -107, 86.5, -107, 85.6, -76.1, 88.5, -69.4, 88.5, -36.4, 100.5, -33.6, 100.5, 8, 126.6, 8, 127.8, 35, 140.7, 35, 142, 70, 151.9, 70, 153.3, 98, 156.3, 98, 157.6, 137.1, 155.5, 146.3, 155.5, 182.3, 144.5, 186.5, 144.5, 207.5, 133.5, 209.6, 133.5, 229.5, 119.5, 232.1, 119.5, 239.1, 108.5, 241, 108.5, 241, -195.3, 232, -205.3, 232, -207.3, 220.1, -208.5, 216.4, -208.5, 195, -194.6, 195, -193.8, 174, -184.8, 174, -184.1, 129.9, -173.5, 98.4, -173.5, 74.2, -178.5, 70.4, -178.5, 45.4, -188.5, 42.6, -188.5, -5, -218.7, -5, -219.8, -36, -232.8, -36, -234.1, -57, -239.1, -57, -240.2, -82.8, -244.5, -123.2, -244.5, -161.1, -235.5, -165.4, -235.5, -186.4, -226, -187, -230.8, -187, -235.3, -198, -246.3)
 
 [node name="foreground_generator" parent="." instance=ExtResource("7_st0q7")]
 
