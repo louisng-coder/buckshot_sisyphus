@@ -26,7 +26,7 @@ var show_objective := true
 var objective_target := Vector2(1000, -1000)
 var objective_lerp_speed := 2.0
 var objective_timer := 0.0
-var delay_after_focus := 1.5
+var delay_after_focus := 1
 
 var CloneScene   = preload("res://scenes/clone.tscn")
 var ShotgunScene = preload("res://scenes/shotgun.tscn")
@@ -66,6 +66,7 @@ func _attach_shotgun():
 
 
 func _physics_process(delta: float) -> void:
+	GlobalVariables.ammo_left = remaining_shots
 	#Objective camera focus before gameplay
 	if show_objective:
 		camera.global_position = camera.global_position.lerp(objective_target, delta * objective_lerp_speed)
@@ -101,10 +102,9 @@ func _physics_process(delta: float) -> void:
 			var force = (target - global_position) * spring_strength
 			apply_central_force(force)
 			if touching_surface:
-				body.apply_central_force(-force)
+				body.apply_central_force(-force * 1.2) 
 
 
-# — Shotgun charge + recoil (no mouse aim) —
 # — Shotgun charge + recoil (no mouse aim) —
 	if Input.is_action_pressed("shoot"):
 		if remaining_shots > 0:
@@ -135,13 +135,18 @@ func _physics_process(delta: float) -> void:
 	# manual loop: only if not in spawn area
 	if Input.is_action_just_pressed("loop") and not GlobalVariables.in_spawn_area:
 		perform_loop()
+		remaining_shots = 2
 
 	# camera follow lerp during gameplay
-	var mpos2 = get_global_mouse_position()
-	var vp   = get_viewport().get_visible_rect().size
-	var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
-	camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
-	
+	if Input.is_action_pressed("look"):
+		var mpos2 = get_global_mouse_position()
+		var vp   = get_viewport().get_visible_rect().size
+		var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
+		camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
+	else:
+		camera.offset = camera.offset.lerp(Vector2(0,0), delta * CAMERA_LERP_SPEED)
+	if Input.is_action_just_pressed("debug"):
+		get_parent().position = Vector2(1000,-3000)
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:

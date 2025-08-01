@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=11 format=3 uid="uid://dxhogwkguk3aj"]
 
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
 [ext_resource type="Script" uid="uid://bx7htk6s7vwoa" path="res://scripts/variables(testing).gd" id="3_rnkuw"]
+[ext_resource type="Script" uid="uid://c7fimcdntfofc" path="res://scenes/label.gd" id="4_dexii"]
+[ext_resource type="Script" uid="uid://bfjfrwe218v4y" path="res://scenes/flag.gd" id="5_1hwpr"]
 [ext_resource type="PackedScene" uid="uid://4m6cg2d7oncq" path="res://scenes/block.tscn" id="5_2so7o"]
 [ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scenes/player_area.gd" id="6_2so7o"]
 [ext_resource type="Texture2D" uid="uid://cvv72dka1p3ay" path="res://assets/scratch/image__76_-removebg-preview.png" id="6_st0q7"]
@@ -49,8 +51,21 @@ offset_left = 24.0
 offset_top = 19.0
 offset_right = 504.0
 offset_bottom = 104.0
+theme_override_fonts/font = ExtResource("3_6c5u0")
+theme_override_font_sizes/font_size = 60
 max_value = 1.0
 script = SubResource("GDScript_vcsse")
+
+[node name="Label" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 619.0
+offset_right = 435.0
+offset_bottom = 698.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_6c5u0")
+theme_override_font_sizes/font_size = 60
+script = ExtResource("4_dexii")
 
 [node name="spawn_area" type="Area2D" parent="."]
 position = Vector2(100, 114)
@@ -58,16 +73,26 @@ script = ExtResource("6_2so7o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="spawn_area"]
 build_mode = 1
-polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 83, 6, 83, -6, 26, -6, 26, -12)
+polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 26, -6, 26, -12)
 
-[node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
-
-[node name="Image76-removebg-preview" type="Sprite2D" parent="."]
+[node name="flag" type="Area2D" parent="."]
 position = Vector2(1000, -1000)
+script = ExtResource("5_1hwpr")
+
+[node name="Image76-removebg-preview" type="Sprite2D" parent="flag"]
+position = Vector2(2.03204, 4.43988)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("6_st0q7")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="flag"]
+position = Vector2(2.03204, 4.43988)
+scale = Vector2(0.1, 0.1)
+polygon = PackedVector2Array(-187, -246.5, -232, -246.5, -236.8, -240.5, -243.2, -240.5, -235, 242.7, -235, 246.5, -198.2, 246.5, -190.9, 244.5, -183.2, 244.5, -180, 231.7, -180, 111.9, -151.1, 99.2, -75.4, 94.5, -71.3, 94.5, 27, 143.6, 27, 146.5, 90, 160.5, 90, 165.2, 183, 150.5, 189.1, 150.5, 239.1, 116.5, 247.2, 116.5, 240, -202.5, 240, -217.5, 128.3, -179.5, 100, -179.5, -49, -242.2, -49, -245, -58.1, -246.5, -137.8, -246.5, -183.5, -232.7, -187, -243.2)
+
+[node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
 
 [node name="foreground_generator" parent="." instance=ExtResource("7_st0q7")]
 
 [connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
 [connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]
+[connection signal="body_entered" from="flag" to="flag" method="_on_body_entered"]
