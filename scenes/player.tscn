@@ -1,10 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bydq8rtfu3hos"]
+[gd_scene load_steps=5 format=3 uid="uid://bydq8rtfu3hos"]
 
 [ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
 [ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="3_qhqgy"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qhqgy"]
-bounce = 0.2
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
 
@@ -14,7 +11,6 @@ bounce = 0.2
 
 [node name="Body" type="RigidBody2D" parent="."]
 mass = 30.0
-physics_material_override = SubResource("PhysicsMaterial_qhqgy")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
 position = Vector2(-9.53674e-07, 0)

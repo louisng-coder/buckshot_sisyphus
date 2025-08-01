@@ -3,10 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://3hqnqonsm75c" path="res://assets/icon.svg" id="1_6eo5e"]
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
-[ext_resource type="Script" path="res://scripts/variables(testing).gd" id="3_rnkuw"]
+[ext_resource type="Script" uid="uid://bx7htk6s7vwoa" path="res://scripts/variables(testing).gd" id="3_rnkuw"]
 [ext_resource type="Texture2D" uid="uid://b6yw03p6q1rh3" path="res://assets/icon (1).jpg" id="4_vcsse"]
-[ext_resource type="Script" uid="uid://n5yu04o1kbs4" path="res://scenes/progress_bar.gd" id="6_2so7o"]
-[ext_resource type="Script" uid="uid://cp6vntibvh1on" path="res://scenes/time.gd" id="7_st0q7"]
+[ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scenes/player_area.gd" id="6_2so7o"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2so7o"]
 texture = ExtResource("4_vcsse")
@@ -26,12 +25,20 @@ physics_layer_0/collision_mask = 15
 sources/0 = SubResource("TileSetAtlasSource_2so7o")
 sources/1 = SubResource("TileSetAtlasSource_st0q7")
 
+[sub_resource type="GDScript" id="GDScript_vcsse"]
+script/source = "extends ProgressBar
+
+func _process(delta: float) -> void:
+	value = GlobalVariables.bar_value
+"
+
 [node name="Stage" type="Node2D"]
 
 [node name="root of player" parent="." instance=ExtResource("2_aees8")]
-position = Vector2(100, 100)
+position = Vector2(100, 114)
 
 [node name="Variables" type="Label" parent="."]
+visible = false
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_fonts/font = ExtResource("3_6c5u0")
@@ -56,15 +63,16 @@ offset_top = 19.0
 offset_right = 504.0
 offset_bottom = 104.0
 max_value = 1.0
+script = SubResource("GDScript_vcsse")
+
+[node name="spawn_area" type="Area2D" parent="."]
+position = Vector2(100, 102)
+scale = Vector2(2, 2)
 script = ExtResource("6_2so7o")
 
-[node name="time" type="Label" parent="CanvasLayer/Control"]
-layout_mode = 0
-offset_left = 985.0
-offset_top = 443.0
-offset_right = 1102.0
-offset_bottom = 597.0
-theme_override_fonts/font = ExtResource("3_6c5u0")
-theme_override_font_sizes/font_size = 100
-text = "1"
-script = ExtResource("7_st0q7")
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="spawn_area"]
+build_mode = 1
+polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 83, 6, 83, -6, 26, -6, 26, -12)
+
+[connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
+[connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]

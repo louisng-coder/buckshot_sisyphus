@@ -16,3 +16,4 @@ var touching_surface: bool = false
 var grab_pressed: bool = false
 var bar_value
 var timer_value
+var in_spawn_area = false

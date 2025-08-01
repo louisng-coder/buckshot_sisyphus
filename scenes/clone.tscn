@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://ch0ojmhqb1iry"]
+[gd_scene load_steps=2 format=3 uid="uid://ch0ojmhqb1iry"]
 
 [ext_resource type="Texture2D" uid="uid://c73glw5ng7tfc" path="res://assets/head.png" id="1_ypstt"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
 
 [node name="clone" type="Node2D"]
 
@@ -60,7 +58,6 @@ position = Vector2(67, 0)
 collision_layer = 4
 collision_mask = 4
 mass = 5.0
-physics_material_override = SubResource("PhysicsMaterial_onrkg")
 gravity_scale = 0.1
 freeze = true
 
