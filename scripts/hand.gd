@@ -23,10 +23,10 @@ var remaining_shots := max_shots
 
 # --- Objective Camera Lerp Variables ---
 var show_objective := true
-var objective_target := Vector2(1000, -500)
-var objective_lerp_speed := 5.0
+var objective_target := Vector2(1000, -1000)
+var objective_lerp_speed := 2.0
 var objective_timer := 0.0
-var delay_after_focus := 1
+var delay_after_focus := 1.5
 
 var CloneScene   = preload("res://scenes/clone.tscn")
 var ShotgunScene = preload("res://scenes/shotgun.tscn")
@@ -66,7 +66,6 @@ func _attach_shotgun():
 
 
 func _physics_process(delta: float) -> void:
-	GlobalVariables.ammo_left = remaining_shots
 	#Objective camera focus before gameplay
 	if show_objective:
 		camera.global_position = camera.global_position.lerp(objective_target, delta * objective_lerp_speed)
@@ -136,21 +135,19 @@ func _physics_process(delta: float) -> void:
 	# manual loop: only if not in spawn area
 	if Input.is_action_just_pressed("loop") and not GlobalVariables.in_spawn_area:
 		perform_loop()
-		remaining_shots = 2
 
 	# camera follow lerp during gameplay
-	if Input.is_action_pressed("look"):
-		var mpos2 = get_global_mouse_position()
-		var vp   = get_viewport().get_visible_rect().size
-		var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
-		camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
+	var mpos2 = get_global_mouse_position()
+	var vp   = get_viewport().get_visible_rect().size
+	var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
+	camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
 	
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
-			MOUSE_BUTTON_WHEEL_DOWN:
-				_change_zoom(-zoom_step)
 			MOUSE_BUTTON_WHEEL_UP:
+				_change_zoom(-zoom_step)
+			MOUSE_BUTTON_WHEEL_DOWN:
 				_change_zoom( zoom_step)
 
 func _change_zoom(delta_zoom: float) -> void:
