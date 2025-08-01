@@ -4,5 +4,5 @@
 
 [node name="foreground_generator" type="Node2D"]
 script = ExtResource("1_nf7c3")
-block_count = 5
+block_count = 15
 size = 0.25

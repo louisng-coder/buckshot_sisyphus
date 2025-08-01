@@ -7,6 +7,9 @@ extends RigidBody2D
 @export_range(0.1, 10.0, 0.1) var min_zoom := 0.5
 @export_range(0.1, 10.0, 0.1) var max_zoom := 2.0
 @export var zoom_step := 0.1
+@export var max_shots := 2
+var remaining_shots := max_shots
+
 
 
 @onready var player_root = get_parent()
@@ -20,7 +23,7 @@ extends RigidBody2D
 
 # --- Objective Camera Lerp Variables ---
 var show_objective := true
-var objective_target := Vector2(1000, -500)
+var objective_target := Vector2(1000, -1000)
 var objective_lerp_speed := 2.0
 var objective_timer := 0.0
 var delay_after_focus := 1.5
@@ -102,13 +105,26 @@ func _physics_process(delta: float) -> void:
 
 
 # — Shotgun charge + recoil (no mouse aim) —
+# — Shotgun charge + recoil (no mouse aim) —
 	if Input.is_action_pressed("shoot"):
-		is_charging = true
-		charge_force = clamp(charge_force + CHARGE_RATE * delta, 0, MAX_FORCE)
-		Engine.time_scale = 0.03
+		if remaining_shots > 0:
+			is_charging = true
+			charge_force = clamp(charge_force + CHARGE_RATE * delta, 0, MAX_FORCE)
+			Engine.time_scale = 0.03
+		else:
+			pass
+			# Play empty click (once)
+		if not is_charging:
+				#$EmptyClickSound.play()
+			is_charging = true  # prevent spamming sound
 	elif Input.is_action_just_released("shoot") and is_charging:
+		Engine.time_scale = 1
 		is_charging = false
-		Engine.time_scale = 1.0
+		if remaining_shots > 0:
+			var dir = shotgun_object.actual_direction.normalized()
+			body.apply_impulse(-dir * charge_force)
+			charge_force = 0.0
+			remaining_shots -= 1
 	
 		# always shoot opposite the hand-to-shoulder vector
 		var dir = (hand.global_position - shoulder.global_position).normalized()
@@ -124,7 +140,7 @@ func _physics_process(delta: float) -> void:
 	var mpos2 = get_global_mouse_position()
 	var vp   = get_viewport().get_visible_rect().size
 	var target_offset = (mpos2 - global_position) / vp * OFFSET_MULTIPLIER
-	camera.offset = camera.offset.lerp(-target_offset, delta * CAMERA_LERP_SPEED)
+	camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
 	
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:

@@ -63,7 +63,7 @@ polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 83, 6, 83, -6, 26
 [node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
 
 [node name="Image76-removebg-preview" type="Sprite2D" parent="."]
-position = Vector2(1000, -500)
+position = Vector2(1000, -1000)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("6_st0q7")
 

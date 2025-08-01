@@ -3,7 +3,7 @@ extends Node2D
 @export var block_count: int = 30
 
 # Define a rectangle where blocks *can* spawn:
-@export var spawn_area: Rect2 = Rect2(Vector2(0, -300), Vector2(800, 700))
+@export var spawn_area: Rect2 = Rect2(Vector2(0, 250), Vector2(1000, -1500))
 
 # Define a rectangle where blocks *must not* spawn:
 @export var danger_zone: Rect2 = Rect2(Vector2(0, 0), Vector2(250, 250))
@@ -11,6 +11,7 @@ extends Node2D
 var block_scenes: Array[PackedScene] = []
 @export var scale_range: Vector2 = Vector2(0.2, 0.3)  # min and max scale
 @export var rotation_range: Vector2 = Vector2(-10, 10)  # in degrees
+
 
 
 func _ready():
