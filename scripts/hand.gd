@@ -145,8 +145,7 @@ func _physics_process(delta: float) -> void:
 		camera.offset = camera.offset.lerp(target_offset, delta * CAMERA_LERP_SPEED)
 	else:
 		camera.offset = camera.offset.lerp(Vector2(0,0), delta * CAMERA_LERP_SPEED)
-	if Input.is_action_just_pressed("debug"):
-		get_parent().position = Vector2(1000,-3000)
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
