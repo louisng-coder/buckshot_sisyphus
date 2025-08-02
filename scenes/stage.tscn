@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=15 format=3 uid="uid://dxhogwkguk3aj"]
 
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://73pe2ouxoq6n" path="res://scenes/foreground_generator.tscn" id="7_st0q7"]
 [ext_resource type="Texture2D" uid="uid://poet0dgr717i" path="res://assets/scratch/background_0.png" id="10_yd2gm"]
 [ext_resource type="PackedScene" uid="uid://dpvtd7ej3dkhi" path="res://scenes/scratch_blocks/block_10.tscn" id="11_0hg5s"]
+[ext_resource type="AudioStream" uid="uid://bxmicjofd26gq" path="res://assets/jazz.mp3" id="12_jl6nj"]
 
 [sub_resource type="GDScript" id="GDScript_vcsse"]
 script/source = "extends ProgressBar
@@ -114,11 +115,17 @@ offset_top = -7449.0
 offset_right = 9497.0
 offset_bottom = 6986.0
 texture = ExtResource("10_yd2gm")
+expand_mode = 3
 stretch_mode = 1
 
 [node name="scratch10" parent="." instance=ExtResource("11_0hg5s")]
 position = Vector2(937, -966)
 scale = Vector2(0.2, 0.2)
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_jl6nj")
+autoplay = true
+parameters/looping = true
 
 [connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
 [connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]

@@ -113,7 +113,7 @@ func _physics_process(delta: float) -> void:
 			var force = (target - global_position) * spring_strength
 			apply_central_force(force)
 			if touching_surface:
-				body.apply_central_force(-force * 1.2) 
+				body.apply_central_force(-force * 1) 
 
 
 # — Shotgun charge + recoil (no mouse aim) —
@@ -160,9 +160,9 @@ func _physics_process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
-			MOUSE_BUTTON_WHEEL_UP:
-				_change_zoom(-zoom_step)
 			MOUSE_BUTTON_WHEEL_DOWN:
+				_change_zoom(-zoom_step)
+			MOUSE_BUTTON_WHEEL_UP:
 				_change_zoom( zoom_step)
 
 func _change_zoom(delta_zoom: float) -> void:
