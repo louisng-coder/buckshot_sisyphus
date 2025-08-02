@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bevnlgkcfdg0b"
-path="res://.godot/imported/Shotgun.png-cf150018dc7e57854a17f8adcfd0933f.ctex"
+uid="uid://bfh33uc18pkk2"
+path="res://.godot/imported/torso.png-f9db60cb59e75d5d8fa90d1e7e052a7d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Shotgun.png"
-dest_files=["res://.godot/imported/Shotgun.png-cf150018dc7e57854a17f8adcfd0933f.ctex"]
+source_file="res://assets/torso.png"
+dest_files=["res://.godot/imported/torso.png-f9db60cb59e75d5d8fa90d1e7e052a7d.ctex"]
 
 [params]
 

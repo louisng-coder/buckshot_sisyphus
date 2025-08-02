@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://poet0dgr717i"
-path="res://.godot/imported/background2.png-5cf14bd196c0ee6d9483d178a05ce113.ctex"
+uid="uid://btbnpwewqjmgw"
+path="res://.godot/imported/image-removebg-preview (13).png-fbbb9c3d9689b1e45ba5910de8041999.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/scratch/background2.png"
-dest_files=["res://.godot/imported/background2.png-5cf14bd196c0ee6d9483d178a05ce113.ctex"]
+source_file="res://assets/image-removebg-preview (13).png"
+dest_files=["res://.godot/imported/image-removebg-preview (13).png-fbbb9c3d9689b1e45ba5910de8041999.ctex"]
 
 [params]
 

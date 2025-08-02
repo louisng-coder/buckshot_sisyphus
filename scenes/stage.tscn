@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=14 format=3 uid="uid://dxhogwkguk3aj"]
 
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
@@ -9,6 +9,8 @@
 [ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scenes/player_area.gd" id="6_2so7o"]
 [ext_resource type="Texture2D" uid="uid://cvv72dka1p3ay" path="res://assets/scratch/image__76_-removebg-preview.png" id="6_st0q7"]
 [ext_resource type="PackedScene" uid="uid://73pe2ouxoq6n" path="res://scenes/foreground_generator.tscn" id="7_st0q7"]
+[ext_resource type="Texture2D" uid="uid://poet0dgr717i" path="res://assets/scratch/background_0.png" id="10_yd2gm"]
+[ext_resource type="PackedScene" uid="uid://dpvtd7ej3dkhi" path="res://scenes/scratch_blocks/block_10.tscn" id="11_0hg5s"]
 
 [sub_resource type="GDScript" id="GDScript_vcsse"]
 script/source = "extends ProgressBar
@@ -24,6 +26,9 @@ func _process(delta: float) -> void:
 	# Clamp into [min_value, max_value]
 	value = clamp(raw_value, min_value, max_value)
 "
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yd2gm"]
+size = Vector2(128, 46)
 
 [node name="Stage" type="Node2D"]
 
@@ -71,9 +76,16 @@ script = ExtResource("4_dexii")
 position = Vector2(100, 114)
 script = ExtResource("6_2so7o")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="spawn_area"]
-build_mode = 1
-polygon = PackedVector2Array(-25, -12, -25, 12, 26, 12, 26, 6, 26, -6, 26, -12)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="spawn_area"]
+position = Vector2(35, 0)
+shape = SubResource("RectangleShape2D_yd2gm")
+
+[node name="ColorRect" type="ColorRect" parent="spawn_area"]
+offset_left = -29.0
+offset_top = -23.0
+offset_right = 99.0
+offset_bottom = 23.0
+color = Color(1, 0, 0, 0.262745)
 
 [node name="flag" type="Area2D" parent="."]
 position = Vector2(1000, -1000)
@@ -90,8 +102,23 @@ scale = Vector2(0.1, 0.1)
 polygon = PackedVector2Array(-187, -246.5, -232, -246.5, -236.8, -240.5, -243.2, -240.5, -235, 242.7, -235, 246.5, -198.2, 246.5, -190.9, 244.5, -183.2, 244.5, -180, 231.7, -180, 111.9, -151.1, 99.2, -75.4, 94.5, -71.3, 94.5, 27, 143.6, 27, 146.5, 90, 160.5, 90, 165.2, 183, 150.5, 189.1, 150.5, 239.1, 116.5, 247.2, 116.5, 240, -202.5, 240, -217.5, 128.3, -179.5, 100, -179.5, -49, -242.2, -49, -245, -58.1, -246.5, -137.8, -246.5, -183.5, -232.7, -187, -243.2)
 
 [node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
+position = Vector2(-124, -101)
+scale = Vector2(2, 2)
 
 [node name="foreground_generator" parent="." instance=ExtResource("7_st0q7")]
+
+[node name="background" type="TextureRect" parent="."]
+z_index = -3
+offset_left = -7106.0
+offset_top = -7449.0
+offset_right = 9497.0
+offset_bottom = 6986.0
+texture = ExtResource("10_yd2gm")
+stretch_mode = 1
+
+[node name="scratch10" parent="." instance=ExtResource("11_0hg5s")]
+position = Vector2(937, -966)
+scale = Vector2(0.2, 0.2)
 
 [connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
 [connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]

@@ -2,7 +2,7 @@ extends RigidBody2D
 
 @export var spring_strength: float = 1000.0
 @export var damping: float = 200.0
-@export var max_reach: float = 60.0
+@export var max_reach: float = 100.0
 @export var dead_zone: float = 10.0
 @export_range(0.1, 10.0, 0.1) var min_zoom := 0.5
 @export_range(0.1, 10.0, 0.1) var max_zoom := 2.0
@@ -66,18 +66,29 @@ func _attach_shotgun():
 
 
 func _physics_process(delta: float) -> void:
+	if linear_velocity.length() > 5000 and not GlobalVariables.in_spawn_area:
+		perform_loop()
+		remaining_shots = max_shots
 	GlobalVariables.ammo_left = remaining_shots
 	#Objective camera focus before gameplay
 	if show_objective:
+		# Skip on any mouse button click
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+			show_objective = false
+			camera.offset = Vector2.ZERO
+			camera.global_position = global_position
+			return
+
+	# Continue lerping toward objective
 		camera.global_position = camera.global_position.lerp(objective_target, delta * objective_lerp_speed)
 		if camera.global_position.distance_to(objective_target) < 1.0:
 			objective_timer += delta
 			if objective_timer >= delay_after_focus:
 				show_objective = false
-				# Reset camera offset and snap position to player
 				camera.offset = Vector2.ZERO
 				camera.global_position = global_position
 		return
+
 
 	# update UI bars
 	GlobalVariables.bar_value = charge_force / MAX_FORCE
