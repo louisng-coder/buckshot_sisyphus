@@ -1,9 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://73pe2ouxoq6n"]
 
-[ext_resource type="Script" uid="uid://cb4rnw15cp1kt" path="res://scenes/foreground_generator.gd" id="1_nf7c3"]
+[ext_resource type="Script" uid="uid://cb4rnw15cp1kt" path="res://scripts/foreground_generator.gd" id="1_nf7c3"]
 
 [node name="foreground_generator" type="Node2D"]
 script = ExtResource("1_nf7c3")
 block_count = 80
+spawn_area = Rect2(-200, -1000, 5000, 5000)
 
 [node name="block_01" type="StaticBody2D" parent="."]
