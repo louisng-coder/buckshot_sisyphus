@@ -5,6 +5,4 @@ func _on_body_entered(body: Node2D) -> void:
 		end_game()
 
 func end_game():
-	# Replace this with your actual game-ending logic
-	print("Game Over")
-	get_tree().quit()
+	GlobalVariables.finished_game = true

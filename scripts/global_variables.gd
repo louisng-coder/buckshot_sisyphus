@@ -19,3 +19,4 @@ var timer_value
 var in_spawn_area = false
 var level = 0
 var ammo_left
+var finished_game = false

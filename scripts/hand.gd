@@ -192,9 +192,12 @@ func perform_loop():
 	# apply tints
 	var base_brightness := 1.0
 	var decrement := 0.05
-	for idx in clones.size():
+	var count := clones.size()
+	for idx in count:
 		var corpse = clones[idx]
-		var strength = max(base_brightness - idx * decrement, 0.0)
+		# invert index so 0 → newest, count-1 → oldest
+		var inv = count - 1 - idx
+		var strength = max(base_brightness - inv * decrement, 0.0)
 		var tint = Color(strength, strength, strength)
 		for child in corpse.get_children():
 			if child is CanvasItem:
@@ -202,6 +205,7 @@ func perform_loop():
 			for sub in child.get_children():
 				if sub is CanvasItem:
 					sub.modulate = tint
+
 
 	# sync & freeze each part on the clone
 	var part_paths = ["Body", "Body/shoulder", "upperarm", "forearm", "hand", "head"]

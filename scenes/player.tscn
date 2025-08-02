@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bydq8rtfu3hos"]
+[gd_scene load_steps=10 format=3 uid="uid://bydq8rtfu3hos"]
 
 [ext_resource type="Texture2D" uid="uid://bfh33uc18pkk2" path="res://assets/torso.png" id="1_dqkch"]
+[ext_resource type="Script" uid="uid://dnvuvux2fqceq" path="res://scenes/camera_2d.gd" id="1_tuyoq"]
 [ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
 [ext_resource type="Texture2D" uid="uid://bks6kjv408k8v" path="res://assets/arm.png" id="2_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://bl5pxco5u1eey" path="res://assets/hand.png" id="4_qlg0r"]
@@ -27,6 +28,7 @@ node_b = NodePath("../../upperarm")
 zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 rotation_smoothing_speed = 15.0
+script = ExtResource("1_tuyoq")
 
 [node name="Image-removebg-preview(6)" type="Sprite2D" parent="Body"]
 position = Vector2(0, -9)
