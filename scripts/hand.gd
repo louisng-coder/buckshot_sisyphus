@@ -42,10 +42,11 @@ const CHARGE_RATE       = 500000.0
 
 var charge_force := 0.0
 var is_charging := false
-
+var teleport_triggered = false
 # store original poses for reset
 var original_positions = {}
 var original_rotations = {}
+
 
 func _ready():
 	# attach shotgun
@@ -64,8 +65,22 @@ func _attach_shotgun():
 	joint.node_a = shotgun_object.get_path()
 	joint.node_b = hand.get_path()
 
+func flip_gravity():
+	if GlobalVariables.gravity_flipped:
+		PhysicsServer2D.area_set_param(get_world_2d().space, PhysicsServer2D.AREA_PARAM_GRAVITY_VECTOR, Vector2.DOWN)
+	else:
+		PhysicsServer2D.area_set_param(get_world_2d().space, PhysicsServer2D.AREA_PARAM_GRAVITY_VECTOR, Vector2.UP)
+
+	GlobalVariables.gravity_flipped = !GlobalVariables.gravity_flipped
+
+	
 
 func _physics_process(delta: float) -> void:
+	if Input.is_key_pressed(KEY_SHIFT) \
+	and Input.is_key_pressed(KEY_B) \
+	and Input.is_key_pressed(KEY_ALT) \
+	and Input.is_key_pressed(KEY_CTRL):
+		flip_gravity()
 	if linear_velocity.length() > 5000 and not GlobalVariables.in_spawn_area:
 		perform_loop()
 		remaining_shots = max_shots
@@ -132,10 +147,18 @@ func _physics_process(delta: float) -> void:
 		Engine.time_scale = 1
 		is_charging = false
 		if remaining_shots > 0:
+			var force_ratio = clamp(charge_force / 90000.0, 0.0, 1.0)
+			$Thump.volume_db = linear_to_db(force_ratio)  # convert 0.0–1.0 to decibels
+			$Thump.play(0)
+
 			var dir = shotgun_object.actual_direction.normalized()
 			body.apply_impulse(-dir * charge_force)
+
 			charge_force = 0.0
 			remaining_shots -= 1
+		else:
+			GlobalVariables.trying_shoot_no_ammo = true
+
 	
 		# always shoot opposite the hand-to-shoulder vector
 		var dir = (hand.global_position - shoulder.global_position).normalized()

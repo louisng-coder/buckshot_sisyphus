@@ -22,3 +22,6 @@ var ammo_left
 var finished_game = false
 var choice_started = false
 var ending = ""
+var finished_once = false
+var gravity_flipped := false
+var trying_shoot_no_ammo := false

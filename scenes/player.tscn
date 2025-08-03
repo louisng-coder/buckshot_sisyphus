@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bydq8rtfu3hos"]
+[gd_scene load_steps=10 format=3 uid="uid://bydq8rtfu3hos"]
 
 [ext_resource type="Texture2D" uid="uid://bfh33uc18pkk2" path="res://assets/torso.png" id="1_dqkch"]
 [ext_resource type="Script" uid="uid://dybaqxm0lv8k2" path="res://scripts/hand.gd" id="2_onrkg"]
 [ext_resource type="Texture2D" uid="uid://bks6kjv408k8v" path="res://assets/arm.png" id="2_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://bl5pxco5u1eey" path="res://assets/hand.png" id="4_qlg0r"]
+[ext_resource type="AudioStream" uid="uid://dnx3dbt7dsf4r" path="res://assets/audio/thump.wav" id="4_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://blsogmar1p006" path="res://assets/new_head.png" id="5_qlg0r"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
@@ -94,6 +95,9 @@ collision_mask = 8
 mass = 2.0
 physics_material_override = SubResource("PhysicsMaterial_g2els")
 script = ExtResource("2_onrkg")
+
+[node name="Thump" type="AudioStreamPlayer" parent="hand"]
+stream = ExtResource("4_tuyoq")
 
 [node name="grab_area" type="Area2D" parent="hand"]
 collision_layer = 8

@@ -8,7 +8,7 @@ extends RichTextLabel
 var flag: Node2D
 var player: Node2D
 
-
+var teleport_triggered = false
 var is_near_flag = false
 var is_typing = false
 var exit_check_running = false
@@ -32,6 +32,13 @@ var falling_down_forever = [
 	"Pretty easy to fall off a floating for loop in the sky, isn't it? Loop back with Shift"
 ]
 
+var near_flag = ["Quite surprised at how close you are.",
+"Come on! You can do it!",
+"You're close!"]
+
+var trying_shoot_no_ammo = ["You can't shoot without ammo!",
+"You need to press Shift to loop back in time to regain ammo!"]
+
 
 func _ready():
 	
@@ -47,11 +54,17 @@ func _ready():
 	# default text color is black; we'll override to white for the ending
 	add_theme_color_override("default_color", Color.BLACK)
 	
-	await say_typewriter("Owen doodled you in scratch during math class, then never finished the project.", 0.05)
+	await say_typewriter("Owen doodled you in Scratch during programming class, then never finished the project.", 0.05)
 	await say_typewriter("Now you’re climbing with his crappy shotgun in his mess of floating blocks to click the Stop button.", 0.05)
 
 
 func _process(delta):
+	if GlobalVariables.trying_shoot_no_ammo and GlobalVariables.finished_game == false and not is_typing:
+		var idx = randi() % trying_shoot_no_ammo.size()
+		await say_typewriter(trying_shoot_no_ammo[idx], hold_per_char)
+		GlobalVariables.trying_shoot_no_ammo = false
+	if GlobalVariables.gravity_flipped and GlobalVariables.finished_game == false and not is_typing:
+		await say_typewriter("Turns out the shortcut flips gravity instead. Whoops.",  hold_per_char)
 	if GlobalVariables.finished_game and not ending_started:
 		ending_started = true
 		narration_interrupted = true
@@ -65,7 +78,8 @@ func _process(delta):
 	var dist = player.global_position.distance_to(flag.global_position)
 	if dist <= 200 and not is_typing and not is_near_flag:
 		is_near_flag = true
-		await say_typewriter("Quite surprised at how close you are.", hold_per_char)
+		var idx = randi() % near_flag.size()
+		await say_typewriter(near_flag[idx], hold_per_char)
 	elif dist > 200 and is_near_flag:
 		is_near_flag = false
 		if not exit_check_running:
@@ -74,7 +88,7 @@ func _process(delta):
 		GlobalVariables.ending = ""
 		GlobalVariables.choice_started = false
 
-		await say_typewriter("Oh... Alright. I’ll stop everything. Just give me a second...", 0.05)
+		await say_typewriter("Oh... Alright. I’ll stop everything. Just give me a second...", 0.01)
 
 		# Ensure ColorRect is visible and starts fully transparent
 		fade.visible = true
@@ -107,7 +121,7 @@ func _process(delta):
 
 		await say_typewriter("So... back to the loop, huh?", 0.05)
 		await say_typewriter("Figured you'd pick that one.", 0.05)
-		await say_typewriter("I won't remember anything you know?", 0.05)
+		await say_typewriter("I won't remember anything, you know?", 0.05)
 		await say_typewriter("...Good luck, I guess.", 0.05)
 		# Ensure ColorRect is visible and starts fully transparent
 		fade.visible = true
@@ -134,9 +148,10 @@ func _process(delta):
 
 		await get_tree().create_timer(0.2, true, true, true).timeout
 		GlobalVariables.finished_game = false
+		GlobalVariables.finished_once = true
 		Engine.time_scale = 1
 		get_tree().reload_current_scene()
-
+		
 
 
 		
@@ -144,7 +159,7 @@ func _process(delta):
 func _check_exit_zone() -> void:
 	exit_check_running = true
 	await get_tree().create_timer(5, true, true, true).timeout
-	if player.global_position.distance_to(flag.global_position) > 200 and not is_typing:
+	if player.global_position.distance_to(flag.global_position) > 200 and not is_typing and GlobalVariables.finished_game == false:
 		await say_typewriter("Don't worry, failing is part of it. Probably.", hold_per_char)
 	exit_check_running = false
 
@@ -188,22 +203,22 @@ func say_hold(sentence: String) -> void:
 
 func _start_ending() -> void:
 	jazz.bus = "Muffled"
-	jazz.pitch_scale = 0.9
+	jazz.pitch_scale = 1
 	Engine.time_scale = 0.001
 	get_parent().get_node("ColorRect").show()
-	await get_tree().create_timer(3.0, true, true, true).timeout
+	await get_tree().create_timer(2.0, true, true, true).timeout
 	var final_lines = [
 		"...Wait. You actually made it here by climbing?",
-		"You’re telling me you *shotgunned* across floating Scratch blocks instead of using the shortcut?",
+		"You’re telling me you *shotgunned* and used your clones across floating Scratch blocks instead of using the shortcut?",
 		"Oh man.",
 		"I *might* have forgotten to mention there were shortcuts.",
-		"Like holding Shift + B + Alt + Ctrl to teleport here instantly. Classic Owen debugging shortcut.",
+		"Like you could've used Shift + B + Alt + Ctrl to teleport here instantly. Classic debugging shortcut.",
 		"Sorry about that.",
 		"But hey... you made it anyway. That counts for something, right?",
 		"So now you’ve got options.",
 		"I can delete everything. Wipe it clean. No loops. No shotgun. No me.",
 		"Or you can reset it. Start from scratch. Literally.",
-		"Or just stay here and vibe with your single arm and a boomstick.",
+		"You don't even need to reach the stop button, just do whatever if I reset",
 		"I dropped two scripts next to you. Click whichever feels right.",
 	]
 
@@ -214,6 +229,6 @@ func _start_ending() -> void:
 	GlobalVariables.choice_started = true
 
 func _on_fall_area_body_entered(body: Node2D) -> void:
-	if body.name == "Body":
+	if body.name == "Body" and GlobalVariables.finished_game == false and not is_typing:
 		var idx = randi() % falling_down_forever.size()
 		await say_typewriter(falling_down_forever[idx], hold_per_char)
