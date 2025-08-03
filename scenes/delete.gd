@@ -1,0 +1,12 @@
+extends Sprite2D
+
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and GlobalVariables.choice_started:
+		if get_rect().has_point(to_local(event.position)):
+			GlobalVariables.ending = "restart"
+
+func _process(delta: float) -> void:
+	if GlobalVariables.choice_started == true:
+		show()
+	else: 
+		hide()

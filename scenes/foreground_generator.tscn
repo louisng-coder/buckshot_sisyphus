@@ -6,5 +6,3 @@
 script = ExtResource("1_nf7c3")
 block_count = 80
 spawn_area = Rect2(-200, -1000, 5000, 5000)
-
-[node name="block_01" type="StaticBody2D" parent="."]

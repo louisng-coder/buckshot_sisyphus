@@ -118,7 +118,7 @@ func _physics_process(delta: float) -> void:
 
 # — Shotgun charge + recoil (no mouse aim) —
 	if Input.is_action_pressed("shoot"):
-		if remaining_shots > 0:
+		if remaining_shots > 0 and GlobalVariables.finished_game == false:
 			is_charging = true
 			charge_force = clamp(charge_force + CHARGE_RATE * delta, 0, MAX_FORCE)
 			Engine.time_scale = 0.03
@@ -128,7 +128,7 @@ func _physics_process(delta: float) -> void:
 		if not is_charging:
 				#$EmptyClickSound.play()
 			is_charging = true  # prevent spamming sound
-	elif Input.is_action_just_released("shoot") and is_charging:
+	elif Input.is_action_just_released("shoot") and is_charging and GlobalVariables.finished_game == false:
 		Engine.time_scale = 1
 		is_charging = false
 		if remaining_shots > 0:

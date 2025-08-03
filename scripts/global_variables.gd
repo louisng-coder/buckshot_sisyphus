@@ -20,3 +20,5 @@ var in_spawn_area = false
 var level = 0
 var ammo_left
 var finished_game = false
+var choice_started = false
+var ending = ""
