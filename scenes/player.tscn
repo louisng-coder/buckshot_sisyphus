@@ -24,7 +24,7 @@ node_a = NodePath("..")
 node_b = NodePath("../../upperarm")
 
 [node name="Camera2D" type="Camera2D" parent="Body"]
-zoom = Vector2(2, 2)
+zoom = Vector2(1.5, 1.5)
 position_smoothing_enabled = true
 rotation_smoothing_speed = 15.0
 
@@ -94,7 +94,6 @@ collision_mask = 8
 mass = 2.0
 physics_material_override = SubResource("PhysicsMaterial_g2els")
 script = ExtResource("2_onrkg")
-min_zoom = 0.1
 
 [node name="grab_area" type="Area2D" parent="hand"]
 collision_layer = 8

@@ -38,7 +38,7 @@ var clones := []
 const OFFSET_MULTIPLIER = 400.0
 const CAMERA_LERP_SPEED = 4.0
 const MAX_FORCE         = 90000.0
-const CHARGE_RATE       = 300000.0
+const CHARGE_RATE       = 500000.0
 
 var charge_force := 0.0
 var is_charging := false
@@ -147,7 +147,6 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("loop") and not GlobalVariables.in_spawn_area:
 		perform_loop()
 		remaining_shots = 2
-
 	# camera follow lerp during gameplay
 	if Input.is_action_pressed("look"):
 		var mpos2 = get_global_mouse_position()

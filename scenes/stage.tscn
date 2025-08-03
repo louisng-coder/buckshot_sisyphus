@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dxhogwkguk3aj"]
+[gd_scene load_steps=24 format=3 uid="uid://dxhogwkguk3aj"]
 
 [ext_resource type="PackedScene" uid="uid://bydq8rtfu3hos" path="res://scenes/player.tscn" id="2_aees8"]
 [ext_resource type="FontFile" uid="uid://nq1yee636tjn" path="res://assets/IBMPlexMono-Medium.ttf" id="3_6c5u0"]
@@ -6,12 +6,19 @@
 [ext_resource type="Script" uid="uid://c7fimcdntfofc" path="res://scripts/label.gd" id="4_dexii"]
 [ext_resource type="Script" uid="uid://bfjfrwe218v4y" path="res://scripts/flag.gd" id="5_1hwpr"]
 [ext_resource type="PackedScene" uid="uid://4m6cg2d7oncq" path="res://scenes/block.tscn" id="5_2so7o"]
+[ext_resource type="Script" uid="uid://cq7qhs5vvmbkm" path="res://scenes/narrator.gd" id="5_e38vs"]
 [ext_resource type="Script" uid="uid://b0ebq1kcy4qi2" path="res://scripts/player_area.gd" id="6_2so7o"]
+[ext_resource type="AudioStream" uid="uid://mqxsjnx83naq" path="res://assets/audio/click sounds/keypress-008.wav" id="6_3bqjo"]
 [ext_resource type="Texture2D" uid="uid://cvv72dka1p3ay" path="res://assets/scratch/image__76_-removebg-preview.png" id="6_st0q7"]
+[ext_resource type="AudioStream" uid="uid://cjbo30akosm8o" path="res://assets/audio/click sounds/keypress-002.wav" id="7_nea6r"]
 [ext_resource type="PackedScene" uid="uid://73pe2ouxoq6n" path="res://scenes/foreground_generator.tscn" id="7_st0q7"]
+[ext_resource type="AudioStream" uid="uid://1epnoqjf6l72" path="res://assets/audio/click sounds/keypress-003.wav" id="8_drh8o"]
+[ext_resource type="AudioStream" uid="uid://ccsboen4tiq7k" path="res://assets/audio/click sounds/keypress-004.wav" id="9_uw5rs"]
+[ext_resource type="AudioStream" uid="uid://bj4inlcnja6o5" path="res://assets/audio/click sounds/keypress-005.wav" id="10_oc2wl"]
 [ext_resource type="Texture2D" uid="uid://poet0dgr717i" path="res://assets/scratch/background_0.png" id="10_yd2gm"]
 [ext_resource type="PackedScene" uid="uid://dpvtd7ej3dkhi" path="res://scenes/scratch_blocks/block_10.tscn" id="11_0hg5s"]
-[ext_resource type="AudioStream" uid="uid://bxmicjofd26gq" path="res://assets/jazz.mp3" id="12_jl6nj"]
+[ext_resource type="AudioStream" uid="uid://cpkkss3qydc60" path="res://assets/audio/click sounds/keypress-006.wav" id="11_1hlks"]
+[ext_resource type="AudioStream" uid="uid://6ujj1km8dl1t" path="res://assets/audio/Project_19.ogg" id="13_e38vs"]
 
 [sub_resource type="GDScript" id="GDScript_vcsse"]
 script/source = "extends ProgressBar
@@ -28,8 +35,21 @@ func _process(delta: float) -> void:
 	value = clamp(raw_value, min_value, max_value)
 "
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5i7n2"]
+streams_count = 7
+stream_0/stream = ExtResource("6_3bqjo")
+stream_1/stream = ExtResource("7_nea6r")
+stream_2/stream = ExtResource("8_drh8o")
+stream_3/stream = ExtResource("9_uw5rs")
+stream_4/stream = ExtResource("10_oc2wl")
+stream_5/stream = ExtResource("11_1hlks")
+stream_6/stream = ExtResource("6_3bqjo")
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yd2gm"]
 size = Vector2(128, 46)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3bqjo"]
+size = Vector2(3942, 1719)
 
 [node name="Stage" type="Node2D"]
 
@@ -64,14 +84,44 @@ script = SubResource("GDScript_vcsse")
 
 [node name="Label" type="Label" parent="CanvasLayer/Control"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 619.0
-offset_right = 435.0
-offset_bottom = 698.0
+offset_left = 768.0
+offset_top = 24.0
+offset_right = 1179.0
+offset_bottom = 103.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_6c5u0")
 theme_override_font_sizes/font_size = 60
 script = ExtResource("4_dexii")
+
+[node name="narrator" type="RichTextLabel" parent="CanvasLayer/Control"]
+z_index = 20
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 104.0
+offset_top = 585.0
+offset_right = 1136.0
+offset_bottom = 607.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("3_6c5u0")
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+script = ExtResource("5_e38vs")
+flag_path = NodePath("../../../flag")
+player_path = NodePath("../../../root of player")
+black_fade_path = NodePath("../../black_fade")
+
+[node name="Click" type="AudioStreamPlayer" parent="CanvasLayer/Control/narrator"]
+stream = SubResource("AudioStreamRandomizer_5i7n2")
+
+[node name="black_fade" type="ColorRect" parent="CanvasLayer"]
+z_index = 6
+offset_right = 1284.0
+offset_bottom = 720.0
+color = Color(0, 0, 0, 1)
 
 [node name="spawn_area" type="Area2D" parent="."]
 position = Vector2(100, 114)
@@ -89,7 +139,7 @@ offset_bottom = 23.0
 color = Color(1, 0, 0, 0.262745)
 
 [node name="flag" type="Area2D" parent="."]
-position = Vector2(1000, -1000)
+position = Vector2(500, -500)
 script = ExtResource("5_1hwpr")
 
 [node name="Image76-removebg-preview" type="Sprite2D" parent="flag"]
@@ -102,6 +152,10 @@ position = Vector2(2.03204, 4.43988)
 scale = Vector2(0.1, 0.1)
 polygon = PackedVector2Array(-187, -246.5, -232, -246.5, -236.8, -240.5, -243.2, -240.5, -235, 242.7, -235, 246.5, -198.2, 246.5, -190.9, 244.5, -183.2, 244.5, -180, 231.7, -180, 111.9, -151.1, 99.2, -75.4, 94.5, -71.3, 94.5, 27, 143.6, 27, 146.5, 90, 160.5, 90, 165.2, 183, 150.5, 189.1, 150.5, 239.1, 116.5, 247.2, 116.5, 240, -202.5, 240, -217.5, 128.3, -179.5, 100, -179.5, -49, -242.2, -49, -245, -58.1, -246.5, -137.8, -246.5, -183.5, -232.7, -187, -243.2)
 
+[node name="scratch10" parent="flag" instance=ExtResource("11_0hg5s")]
+position = Vector2(-63, 34)
+scale = Vector2(0.2, 0.2)
+
 [node name="Scratchblock1" parent="." instance=ExtResource("5_2so7o")]
 position = Vector2(-124, -101)
 scale = Vector2(2, 2)
@@ -110,23 +164,26 @@ scale = Vector2(2, 2)
 
 [node name="background" type="TextureRect" parent="."]
 z_index = -3
-offset_left = -7106.0
-offset_top = -7449.0
-offset_right = 9497.0
-offset_bottom = 6986.0
+offset_left = -61425.0
+offset_top = -44165.0
+offset_right = 69333.6
+offset_bottom = 40670.0
 texture = ExtResource("10_yd2gm")
 expand_mode = 3
 stretch_mode = 1
 
-[node name="scratch10" parent="." instance=ExtResource("11_0hg5s")]
-position = Vector2(937, -966)
-scale = Vector2(0.2, 0.2)
-
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("12_jl6nj")
+stream = ExtResource("13_e38vs")
 autoplay = true
 parameters/looping = true
+
+[node name="fall_area" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="fall_area"]
+position = Vector2(22, 2501.5)
+shape = SubResource("RectangleShape2D_3bqjo")
 
 [connection signal="body_entered" from="spawn_area" to="spawn_area" method="_on_body_entered"]
 [connection signal="body_exited" from="spawn_area" to="spawn_area" method="_on_body_exited"]
 [connection signal="body_entered" from="flag" to="flag" method="_on_body_entered"]
+[connection signal="body_entered" from="fall_area" to="CanvasLayer/Control/narrator" method="_on_fall_area_body_entered"]

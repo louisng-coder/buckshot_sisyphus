@@ -6,3 +6,4 @@ func _on_body_entered(body: Node2D) -> void:
 
 func end_game():
 	GlobalVariables.finished_game = true
+	call_deferred("_trigger_ending")

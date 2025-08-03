@@ -1,10 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://4m6cg2d7oncq"]
+[gd_scene load_steps=3 format=3 uid="uid://4m6cg2d7oncq"]
 
 [ext_resource type="Texture2D" uid="uid://c10ck4qyvwwbp" path="res://assets/scratch/1.png" id="1_8r6n6"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8r6n6"]
 
 [node name="Scratchblock1" type="StaticBody2D"]
 collision_layer = 15
 collision_mask = 15
+physics_material_override = SubResource("PhysicsMaterial_8r6n6")
 
 [node name="Block01082025-132441" type="Sprite2D" parent="."]
 position = Vector2(130, 188)
