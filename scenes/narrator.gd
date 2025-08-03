@@ -32,6 +32,7 @@ var falling_down_forever = [
 	"Pretty easy to fall off a floating for loop in the sky, isn't it? Loop back with Shift"
 ]
 
+
 func _ready():
 	
 
@@ -45,6 +46,10 @@ func _ready():
 	
 	# default text color is black; we'll override to white for the ending
 	add_theme_color_override("default_color", Color.BLACK)
+	
+	await say_typewriter("Owen doodled you in scratch during math class, then never finished the project.", 0.05)
+	await say_typewriter("Now you’re climbing with his crappy shotgun in his mess of floating blocks to click the Stop button.", 0.05)
+
 
 func _process(delta):
 	if GlobalVariables.finished_game and not ending_started:
@@ -60,16 +65,16 @@ func _process(delta):
 	var dist = player.global_position.distance_to(flag.global_position)
 	if dist <= 200 and not is_typing and not is_near_flag:
 		is_near_flag = true
-		await say_typewriter("No one's watching actually, quite surprised at how close you are.", hold_per_char)
+		await say_typewriter("Quite surprised at how close you are.", hold_per_char)
 	elif dist > 200 and is_near_flag:
 		is_near_flag = false
 		if not exit_check_running:
 			_check_exit_zone()
-	if GlobalVariables.ending == "restart":
+	if GlobalVariables.ending == "delete":
 		GlobalVariables.ending = ""
 		GlobalVariables.choice_started = false
 
-		await say_typewriter("Alright. I’ll stop everything. Just give me a second...", 0.05)
+		await say_typewriter("Oh... Alright. I’ll stop everything. Just give me a second...", 0.05)
 
 		# Ensure ColorRect is visible and starts fully transparent
 		fade.visible = true
@@ -95,6 +100,42 @@ func _process(delta):
 			await get_tree().process_frame
 
 		get_tree().quit()
+		
+	if GlobalVariables.ending == "restart":
+		GlobalVariables.ending = ""
+		GlobalVariables.choice_started = false
+
+		await say_typewriter("So... back to the loop, huh?", 0.05)
+		await say_typewriter("Figured you'd pick that one.", 0.05)
+		await say_typewriter("I won't remember anything you know?", 0.05)
+		await say_typewriter("...Good luck, I guess.", 0.05)
+		# Ensure ColorRect is visible and starts fully transparent
+		fade.visible = true
+		fade.color.a = 0.0
+
+		# Fade to black over 2 seconds, ignoring time_scale
+		var fade_duration := 2.0
+		var start_time := Time.get_ticks_usec()
+		while true:
+			var elapsed := float(Time.get_ticks_usec() - start_time) / 1_000_000.0
+			var t: float = clamp(elapsed / fade_duration, 0.0, 1)
+			fade.color = Color(0, 0, 0, t)
+			print(fade)
+			await get_tree().process_frame
+			if t >= 1.0:
+				break
+		add_theme_color_override("default_color", Color.WHITE)
+		await say_typewriter("Resetting the world now...", 0.05)
+		# Pause briefly before quitting (still ignoring time_scale)
+		var wait_start := Time.get_ticks_usec()
+		var wait_duration := 1.5
+		while Time.get_ticks_usec() < wait_start + int(wait_duration * 1_000_000):
+			await get_tree().process_frame
+
+		await get_tree().create_timer(0.2, true, true, true).timeout
+		GlobalVariables.finished_game = false
+		Engine.time_scale = 1
+		get_tree().reload_current_scene()
 
 
 
@@ -102,9 +143,9 @@ func _process(delta):
 
 func _check_exit_zone() -> void:
 	exit_check_running = true
-	await get_tree().create_timer(5, true).timeout
+	await get_tree().create_timer(5, true, true, true).timeout
 	if player.global_position.distance_to(flag.global_position) > 200 and not is_typing:
-		await say_typewriter("Don't worry, falling is part of the design. Probably.", hold_per_char)
+		await say_typewriter("Don't worry, failing is part of it. Probably.", hold_per_char)
 	exit_check_running = false
 
 # typewriter with hold
@@ -150,20 +191,22 @@ func _start_ending() -> void:
 	jazz.pitch_scale = 0.9
 	Engine.time_scale = 0.001
 	get_parent().get_node("ColorRect").show()
-	await get_tree().create_timer(3.0, true, false, true).timeout
+	await get_tree().create_timer(3.0, true, true, true).timeout
 	var final_lines = [
-		"Damn... didn't expect you to reach it.",
-		"Problem is... I just realized, only the user, Owen, can press it.",
-		"Did a quick internet search, he's in college now.",
-		"Sorry I didn't mention it sooner :(",
-		"But really, why press Stop? Do you actually want to end it all?",
-		"...Anyway, I still feel kinda bad for you.",
-		"So I’m giving you a choice.",
-		"I can stop everything, including me, and you’ll stop suffering.",
-		"Or I can reset it all. Start the climb again.",
-		"You can even just mess around with your shotgun and loops. No climb. That’s fair.",
-		"I left two scripts here. Just... click the one you want.",
+		"...Wait. You actually made it here by climbing?",
+		"You’re telling me you *shotgunned* across floating Scratch blocks instead of using the shortcut?",
+		"Oh man.",
+		"I *might* have forgotten to mention there were shortcuts.",
+		"Like holding Shift + B + Alt + Ctrl to teleport here instantly. Classic Owen debugging shortcut.",
+		"Sorry about that.",
+		"But hey... you made it anyway. That counts for something, right?",
+		"So now you’ve got options.",
+		"I can delete everything. Wipe it clean. No loops. No shotgun. No me.",
+		"Or you can reset it. Start from scratch. Literally.",
+		"Or just stay here and vibe with your single arm and a boomstick.",
+		"I dropped two scripts next to you. Click whichever feels right.",
 	]
+
 	
 	for line in final_lines:
 		await say_typewriter(line, 0.01)

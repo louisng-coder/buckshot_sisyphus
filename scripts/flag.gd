@@ -6,4 +6,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 func end_game():
 	GlobalVariables.finished_game = true
-	call_deferred("_trigger_ending")
+
+func _ready():
+	monitoring = false
+	await get_tree().create_timer(5).timeout  # wait half a second
+	monitoring = true

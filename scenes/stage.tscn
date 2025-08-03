@@ -167,6 +167,7 @@ offset_bottom = 23.0
 color = Color(1, 0, 0, 0.262745)
 
 [node name="flag" type="Area2D" parent="."]
+position = Vector2(1000, -1000)
 script = ExtResource("5_1hwpr")
 
 [node name="Image76-removebg-preview" type="Sprite2D" parent="flag"]
